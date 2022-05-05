@@ -1,0 +1,13 @@
+default: &default
+  REGION: ${opt:region, "eu-west-1"}
+  STAGE: ${opt:stage, "dev"}
+  USERNAME: "porthunt"
+
+dev:  &dev
+  <<: [*default]
+
+prod:
+  <<: [*default]
+
+local:
+  <<: [*dev]

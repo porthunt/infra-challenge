@@ -1,0 +1,154 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "primer-challenge",
+    "version": "v1"
+  },
+  "paths": {
+    "/populate": {
+      "post": {
+        "x-amazon-apigateway-integration": {
+          "uri": "${populate_lambda_arn}",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "timeoutInMillis": "${lambda_timeout}",
+          "type": "aws_proxy"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully populated the DynamoDB table."
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "x-amazon-apigateway-integration": {
+          "uri": "${transactions_lambda_arn}",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "timeoutInMillis": "${lambda_timeout}",
+          "type": "aws_proxy"
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "merchant",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Merchant name (case insensitive)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves all the transactions that match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transactions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "get": {
+        "x-amazon-apigateway-integration": {
+          "uri": "${transactions_lambda_arn}",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "timeoutInMillis": "${lambda_timeout}",
+          "type": "aws_proxy"
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Merchant name (case insensitive)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves all the transactions that match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The transaction with the ID {id} was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Generic404Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Generic404Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "status_code": {
+            "type": "integer",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "error"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Transactions": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Transaction"
+        }
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "merchant": {
+            "type": "string"
+          },
+          "processor": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

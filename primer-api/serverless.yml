@@ -1,0 +1,44 @@
+service: primer-challenge
+
+custom:
+  vars: ${file(vars.yml):${opt:stage, "self:provider.stage"}, file(vars.yml):dev}
+  serverless-offline:
+    host: 0.0.0.0
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  region: ${self:custom.vars.REGION}
+  stage: ${self:custom.vars.STAGE}
+  memorySize: 512
+  versionFunctions: false
+  timeout: 10
+  environment:
+    ENVIRONMENT: ${self:custom.vars.STAGE}
+    USERNAME: ${self:custom.vars.USERNAME}
+
+plugins:
+  - serverless-offline
+
+functions:
+  populate:
+    handler: app.populate_table
+    events:
+      - httpApi:
+          method: GET
+          path: /populate
+  
+  transactions:
+    handler: app.transactions
+    events:
+      - httpApi:
+          method: GET
+          path: /transactions
+
+  transaction:
+    handler: app.transactions
+    events:
+      - httpApi:
+          method: GET
+          path: /transactions/{id}

@@ -1,0 +1,100 @@
+resource "aws_iam_role" "lambda_role" {
+  name = "${var.function_name}-role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "lambda_policy" {
+  name       = "${var.function_name}-policy"
+  roles      = [aws_iam_role.lambda_role.id]
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_policy" "lambda_policy" {
+  name        = "${var.function_name}-policy"
+  description = "Permissions that are required for lambda"
+  policy      = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+POLICY
+}
+
+resource "aws_lambda_function" "lambda" {
+  function_name    = var.function_name
+  s3_bucket        = var.s3_bucket
+  s3_key           = var.zip_name
+  handler          = var.handler
+  runtime          = var.runtime
+  timeout          = var.timeout
+  role             = aws_iam_role.lambda_role.arn
+  source_code_hash = var.source_code_hash
+  environment {
+    variables = var.env_variables
+  }
+}
+
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/${var.function_name}"
+  retention_in_days = 3
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "${var.function_name}-logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+
+resource "aws_lambda_permission" "lambda_permission" {
+  action        = "lambda:InvokeFunction"
+  function_name = var.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${var.api_execution_arn}/*/*/*"
+}
