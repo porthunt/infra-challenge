@@ -79,7 +79,6 @@ module "cognito" {
     {
       name     = "role"
       type     = "String"
-      # required = true # not supported by terraform atm
       mutable  = true
     }
   ]
