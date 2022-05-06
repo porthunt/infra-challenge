@@ -1,20 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "3.26.0"
-    }
-  }
-
-  cloud {
-    organization = "primer-challenge"
-
-    workspaces {
-      name = "primer-demo"
-    }
-  }
-}
-
 ### AWS as default provider
 provider "aws" {
   region = var.aws_region
