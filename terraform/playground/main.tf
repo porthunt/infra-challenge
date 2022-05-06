@@ -10,14 +10,14 @@ terraform {
     organization = "primer-challenge"
 
     workspaces {
-      name = "primer-challenge"
+      name = "primer-demo"
     }
   }
 }
 
 ### AWS as default provider
 provider "aws" {
-  region  = var.aws_region
+  region = var.aws_region
 }
 
 ### Build the populate Lambda function
@@ -28,8 +28,8 @@ module "populate_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.populate_table"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
-  env_variables     = {"USERNAME": var.username}
+  source_code_hash  = base64sha256("./primer-api.zip")
+  env_variables     = { "USERNAME" : var.username }
 }
 
 ### Build the transaction Lambda function
@@ -40,16 +40,16 @@ module "transaction_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.transactions"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
-  env_variables     = {"USERNAME": var.username}
+  source_code_hash  = base64sha256("./primer-api.zip")
+  env_variables     = { "USERNAME" : var.username }
 }
 
 ### Create the dynamodb table
 module "dynamodb" {
-  source        = "../modules/dynamodb"
-  table_name    = "${var.username}-transaction-challenge"
-  hash_key      = "transaction_id"
-  billing_mode  = "PAY_PER_REQUEST"
+  source       = "../modules/dynamodb"
+  table_name   = "${var.username}-transaction-challenge"
+  hash_key     = "transaction_id"
+  billing_mode = "PAY_PER_REQUEST"
 
   attributes = [
     {
@@ -64,9 +64,9 @@ module "dynamodb" {
 
   global_secondary_indexes = [
     {
-      name               = "MerchantIndex"
-      hash_key           = "merchant"
-      projection_type    = "ALL"
+      name            = "MerchantIndex"
+      hash_key        = "merchant"
+      projection_type = "ALL"
     }
   ]
 
@@ -77,11 +77,11 @@ module "dynamodb" {
 
 ### Add the API gateway
 module "apigateway" {
-  source           = "../modules/apigateway"
-  api_name         = "${var.username}-transaction-api"
-  openapi_file     = "../../primer-api/openapi.json"
-  template_vars    = {
-    region = var.aws_region
+  source       = "../modules/apigateway"
+  api_name     = "${var.username}-transaction-api"
+  openapi_file = "../../primer-api/openapi.json"
+  template_vars = {
+    region                  = var.aws_region
     transactions_lambda_arn = module.transaction_lambda.invoke_arn
     populate_lambda_arn     = module.populate_lambda.invoke_arn
     lambda_timeout          = 3000
@@ -90,22 +90,22 @@ module "apigateway" {
 
 ### Add the Cognito User Pool
 module "cognito" {
-  source        = "../modules/cognito"
-  pool_name     = "${var.username}-primer-challenge"
-  client_name   = "${var.username}-primer-api"
-  attributes    = [
+  source      = "../modules/cognito"
+  pool_name   = "${var.username}-primer-challenge"
+  client_name = "${var.username}-primer-api"
+  attributes = [
     {
-      name     = "role"
-      type     = "String"
-      mutable  = true
+      name    = "role"
+      type    = "String"
+      mutable = true
     }
   ]
 }
 
 ### Add the SQS queue
 module "sqs" {
-  source        = "../modules/sqs"
-  queue_name    = "${var.username}-primer-challenge-queue"
+  source     = "../modules/sqs"
+  queue_name = "${var.username}-primer-challenge-queue"
 }
 
 
