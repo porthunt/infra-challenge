@@ -1,3 +1,20 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "3.26.0"
+    }
+  }
+
+  cloud {
+    organization = "primer-challenge"
+
+    workspaces {
+      name = "primer-challenge"
+    }
+  }
+}
+
 ### AWS as default provider
 provider "aws" {
   region  = var.aws_region
@@ -11,6 +28,7 @@ module "populate_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.populate_table"
   api_execution_arn = module.apigateway.api_execution_arn
+  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
   env_variables     = {"USERNAME": var.username}
 }
 
@@ -22,6 +40,7 @@ module "transaction_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.transactions"
   api_execution_arn = module.apigateway.api_execution_arn
+  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
   env_variables     = {"USERNAME": var.username}
 }
 
