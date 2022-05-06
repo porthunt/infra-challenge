@@ -92,3 +92,10 @@ module "sqs" {
   source        = "../modules/sqs"
   queue_name    = "${var.username}-primer-challenge-queue"
 }
+
+
+### Add S3 bucket to host lambda code
+module "s3" {
+  source        = "../modules/s3"
+  bucket_name   = "primer-challenge-lambda-deployment-a32w0a"
+}
