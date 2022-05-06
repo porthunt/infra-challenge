@@ -1,7 +1,6 @@
 ### AWS as default provider
 provider "aws" {
   region  = var.aws_region
-  version = "~> 3.20"
 }
 
 ### Build the populate Lambda function
