@@ -8,7 +8,7 @@ on:
       - 'Makefile'
       - 'requirements-dev.txt'
       - '.gitignore'
-      - './terraform'
+      - 'terraform/**'
   workflow_dispatch:
 
 jobs:
