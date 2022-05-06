@@ -8,6 +8,12 @@ variable "tags" {
   default     = {}
 }
 
+variable "force_destroy" {
+    type        = bool
+    default     = false
+    description = "Allows to destroy a bucket that is not empty"
+}
+
 variable "acl" {
     type        = string
     default     = "private"

@@ -36,6 +36,7 @@ variable "timeout" {
 variable "source_code_hash" {
   type        = string
   description = "the source code hash"
+  default     = null
 }
 
 variable "api_execution_arn" {
