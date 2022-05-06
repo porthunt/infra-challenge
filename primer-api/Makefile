@@ -7,12 +7,12 @@ lint:
 	flake8 app/ tests/
 	black --line-length 79 --check app/ tests/
 
+bandit:
+	bandit -r primer-api/app/ --severity-level high
+
 unit:
 	pytest --disable-pytest-warnings tests/unit/
 
-functional:
-	pytest --disable-pytest-warnings tests/functional/
-
-test: unit functional
+test: unit
 
 run: lint test

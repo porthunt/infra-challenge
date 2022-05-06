@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from app.models.currency import Currency
 from app.models.processor import Processor
 from app.models.merchant import Merchant
-from typing import List
+from typing import List, Optional
 from app.aws.dynamodb import retrieve_all, retrieve_item
 from app.settings import username
 from app.errors import TransactionNotFoundError
@@ -30,19 +30,29 @@ class Transaction(BaseModel):
         }
 
 
-def retrieve_transactions() -> List[Transaction]:
-    items = retrieve_all(TRANSACTION_TABLE)
-    return [
-        Transaction(
-            transaction_id=item["transaction_id"],
-            date=item["date"],
-            amount=item["amount"],
-            currency=Currency(value=item["currency"].upper()),
-            processor=Processor(value=item["processor"].upper()),
-            merchant=Merchant(value=item["merchant"].upper()),
-        )
-        for item in items
-    ]
+def retrieve_transactions(
+    cursor: Optional[str] = None, limit: Optional[int] = None
+) -> List[Transaction]:
+    response = retrieve_all(TRANSACTION_TABLE, limit=limit, cursor=cursor)
+    data = {
+        "transactions": [
+            Transaction(
+                transaction_id=item["transaction_id"],
+                date=item["date"],
+                amount=item["amount"],
+                currency=Currency(value=item["currency"].upper()),
+                processor=Processor(value=item["processor"].upper()),
+                merchant=Merchant(value=item["merchant"].upper()),
+            ).to_json()
+            for item in response["Items"]
+        ],
+        "limit": response["limit"],
+    }
+
+    if response.get("LastEvaluatedKey"):
+        data["cursor"] = response["LastEvaluatedKey"]["transaction_id"]
+
+    return data
 
 
 def retrieve_transaction(transaction_id: str) -> Transaction:

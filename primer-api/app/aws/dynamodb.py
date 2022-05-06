@@ -1,6 +1,7 @@
 import os
 import boto3
 from typing import Dict, Optional, List
+from app.settings import limit_settings
 
 
 def create_resource():
@@ -16,8 +17,17 @@ def retrieve_item(table_name: str, key: Dict) -> Optional[Dict]:
         return item.get("Item")
 
 
-def retrieve_all(table_name: str) -> List[Dict]:
+def retrieve_all(
+    table_name: str,
+    limit: Optional[int] = limit_settings["default"],
+    cursor: Optional[str] = None,
+) -> List[Dict]:
+    args = {"Limit": limit if limit else limit_settings["default"]}
+    if cursor:
+        args["ExclusiveStartKey"] = {"transaction_id": cursor}
+
     resource = create_resource()
     table = resource.Table(table_name)
-    response = table.scan()
-    return response["Items"]
+    response = table.scan(**args)
+    response["limit"] = limit
+    return response

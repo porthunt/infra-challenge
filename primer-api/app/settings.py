@@ -21,3 +21,4 @@ logging.basicConfig(
 )
 logger = logging.getLogger("primer-challenge")
 username = os.getenv("USERNAME")
+limit_settings = {"default": 10, "min": 1, "max": 100}

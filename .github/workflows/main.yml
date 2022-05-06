@@ -1,0 +1,47 @@
+name: Execute lint/tests
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'Makefile'
+      - 'requirements-dev.txt'
+      - '.gitignore'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./primer-api
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: make init
+
+      - name: Run pre-commit hooks
+        shell: bash
+        run: pre-commit run --all-files
+      
+      - name: Execute bandit
+        run: make bandit
+
+  tests:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./primer-api
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: make init
+
+      - name: Unit tests
+        run: make unit
+        timeout-minutes: 1

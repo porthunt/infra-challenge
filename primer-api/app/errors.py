@@ -31,3 +31,8 @@ class UnexpectedError(Error):
 class TransactionNotFoundError(Error):
     status_code = 404
     default_message = "Transaction '{transaction_id}' not found"
+
+
+class InvalidInputError(Error):
+    status_code = 400
+    default_message = "Invalid input"
