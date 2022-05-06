@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Create zip file
+      - name: Create ZIP file
         run: zip -q -r ../primer-api.zip app requirements.txt
 
       - name: Upload ZIP to S3

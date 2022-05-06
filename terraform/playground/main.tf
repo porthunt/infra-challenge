@@ -11,7 +11,6 @@ module "populate_lambda" {
   zip_name          = "primer-api.zip"
   s3_bucket         = "primer-challenge-lambda-deployment"
   handler           = "app.populate_table"
-  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
   api_execution_arn = module.apigateway.api_execution_arn
   env_variables     = {"USERNAME": var.username}
 }
@@ -23,7 +22,6 @@ module "transaction_lambda" {
   zip_name          = "primer-api.zip"
   s3_bucket         = "primer-challenge-lambda-deployment"
   handler           = "app.transactions"
-  source_code_hash  = "${base64sha256("../../primer-api/primer-api.zip")}"
   api_execution_arn = module.apigateway.api_execution_arn
   env_variables     = {"USERNAME": var.username}
 }
