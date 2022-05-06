@@ -8,7 +8,7 @@ module "populate_lambda" {
   source            = "../modules/lambda"
   function_name     = "${var.username}-populate"
   zip_name          = "primer-api.zip"
-  s3_bucket         = "primer-challenge-lambda-deployment"
+  s3_bucket         = module.s3.bucket_name
   handler           = "app.populate_table"
   api_execution_arn = module.apigateway.api_execution_arn
   env_variables     = {"USERNAME": var.username}
@@ -19,7 +19,7 @@ module "transaction_lambda" {
   source            = "../modules/lambda"
   function_name     = "${var.username}-transactions"
   zip_name          = "primer-api.zip"
-  s3_bucket         = "primer-challenge-lambda-deployment"
+  s3_bucket         = module.s3.bucket_name
   handler           = "app.transactions"
   api_execution_arn = module.apigateway.api_execution_arn
   env_variables     = {"USERNAME": var.username}
