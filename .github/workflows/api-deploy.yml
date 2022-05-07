@@ -72,7 +72,7 @@ jobs:
       
       - name: Replace Lambdas
         run: |
-          terraform plan -auto-approve -input=false \
+          terraform plan \
             -replace="module.transaction_lambda.aws_lambda_function.lambda" \
             -replace="module.populate_lambda.aws_lambda_function.lambda" \
             -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
