@@ -60,5 +60,3 @@ functions:
           method: GET
           path: transactions/{id}
           private: true
-
-  #

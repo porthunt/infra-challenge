@@ -72,24 +72,21 @@ jobs:
       
       - name: Create ZIP file
         working-directory: ./primer-api
-        run: zip -q -r ../terraform/playground/primer-api.zip app requirements.txt
+        run: zip -q -r ../primer-api.zip app requirements.txt
       
-      - name: Replace Lambdas
+      - name: Upload ZIP to S3
+        uses: zdurham/s3-upload-github-action@master
+        env:
+          FILE: ./primer-api.zip
+          AWS_REGION: eu-west-1
+          S3_BUCKET: ${{ secrets.BUCKET }}
+          S3_KEY: primer-api.zip
+      
+      - name: Lambda Deploy
         run: |
           terraform apply -auto-approve -input=false \
-            -replace="module.transaction_lambda.aws_s3_bucket_object.file_upload" \
-            -replace="module.populate_lambda.aws_s3_bucket_object.file_upload" \
-            -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
-
-      # - name: Upload ZIP to S3
-      #   uses: zdurham/s3-upload-github-action@master
-      #   env:
-      #     FILE: ./primer-api.zip
-      #     AWS_REGION: 'eu-west-1'
-      #     S3_BUCKET: ${{ secrets.BUCKET }}
-      #     S3_KEY: ${{ secrets.S3_KEY }}
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            -var="username=${{ secrets.username }}" \
+            -var="api_key=${{ secrets.api_key }}"
 
   # deploy-apiv2:
   #   needs: [validate, tests]
