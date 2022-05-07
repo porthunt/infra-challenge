@@ -70,15 +70,16 @@ jobs:
       - name: Terraform Init
         run: terraform init
       
+      - name: Create ZIP file
+        working-directory: ./primer-api
+        run: zip -q -r ../terraform/playground/primer-api.zip app requirements.txt
+      
       - name: Replace Lambdas
         run: |
-          terraform plan \
-            -replace="module.transaction_lambda.aws_lambda_function.lambda" \
-            -replace="module.populate_lambda.aws_lambda_function.lambda" \
+          terraform apply -auto-approve -input=false \
+            -replace="module.transaction_lambda.aws_s3_bucket_object.file_upload" \
+            -replace="module.populate_lambda.aws_s3_bucket_object.file_upload" \
             -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
-
-      # - name: Create ZIP file
-      #   run: zip -q -r ../primer-api.zip app requirements.txt
 
       # - name: Upload ZIP to S3
       #   uses: zdurham/s3-upload-github-action@master
