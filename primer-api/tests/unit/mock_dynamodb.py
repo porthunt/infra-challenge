@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from app.settings import limit_settings
 
 TRANSACTIONS = [
@@ -39,6 +39,7 @@ def retrieve_all(
     table: str,
     limit: Optional[int] = limit_settings["default"],
     cursor: Optional[str] = None,
+    filters: Optional[List[Dict[str, str]]] = None,
 ) -> Dict[str, str]:
 
     limit = limit if limit else limit_settings["default"]

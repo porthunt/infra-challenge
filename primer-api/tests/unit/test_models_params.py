@@ -30,8 +30,10 @@ def test_validate_params_invalid_limits():
     assert e.value.message == "limit: ensure this value is greater than 1"
 
     with pytest.raises(InvalidInputError) as e:
-        params.validate_params({"limit": 200}, params.TransactionsQueryParams)
-    assert e.value.message == "limit: ensure this value is less than 101"
+        params.validate_params(
+            {"limit": 10000}, params.TransactionsQueryParams
+        )
+    assert e.value.message == "limit: ensure this value is less than 1001"
 
 
 def test_validate_params_invalid_params():
@@ -40,3 +42,48 @@ def test_validate_params_invalid_params():
             {"limit": 3, "foo": "bar"}, params.TransactionsQueryParams
         )
     assert e.value.message == "foo: extra fields not permitted"
+
+
+def test_validate_params_filters():
+    query_params = {"merchant": "merch", "amount": "300"}
+    p = params.validate_params(query_params, params.TransactionsQueryParams)
+    filters = p.filters()
+    assert len(filters) == 2
+    for filter in filters:
+        if filter["key"] == "merchant":
+            assert filter["value"] == "merch"
+        if filter["key"] == "amount":
+            assert filter["value"] == 300
+
+
+def test_validate_params_filters_gte():
+    query_params = {"merchant": "merch", "amount": "gte:300"}
+    p = params.validate_params(query_params, params.TransactionsQueryParams)
+    filters = p.filters()
+    assert len(filters) == 2
+    for filter in filters:
+        if filter["key"] == "merchant":
+            assert filter["value"] == "merch"
+        if filter["key"] == "amount":
+            assert filter["value"] == 300
+            assert filter["operator"] == "gte"
+
+
+def test_validate_params_filters_lte():
+    query_params = {"merchant": "merch", "amount": "lte:300"}
+    p = params.validate_params(query_params, params.TransactionsQueryParams)
+    filters = p.filters()
+    assert len(filters) == 2
+    for filter in filters:
+        if filter["key"] == "merchant":
+            assert filter["value"] == "merch"
+        if filter["key"] == "amount":
+            assert filter["value"] == 300
+            assert filter["operator"] == "lte"
+
+
+def test_validate_params_invalid_amount():
+    query_params = {"amount": "lt=200"}
+    with pytest.raises(InvalidInputError) as e:
+        params.validate_params(query_params, params.TransactionsQueryParams)
+    assert "string does not match regex" in e.value.message

@@ -1,7 +1,9 @@
 import os
 import boto3
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Tuple
 from app.settings import limit_settings
+from boto3.dynamodb.conditions import And, Key
+from functools import reduce
 
 
 def create_resource():
@@ -21,13 +23,33 @@ def retrieve_all(
     table_name: str,
     limit: Optional[int] = limit_settings["default"],
     cursor: Optional[str] = None,
+    filters: Optional[List[Dict[str, str]]] = None,
 ) -> List[Dict]:
     args = {"Limit": limit if limit else limit_settings["default"]}
     if cursor:
         args["ExclusiveStartKey"] = {"transaction_id": cursor}
+    if filters:
+        __filters = prepare_filters(filters)
+        args["FilterExpression"] = (
+            __filters[0] if len(__filters) == 1 else reduce(And, __filters)
+        )
 
     resource = create_resource()
     table = resource.Table(table_name)
     response = table.scan(**args)
     response["limit"] = limit
     return response
+
+
+def prepare_filters(filters: List[Dict[str, str]]) -> Tuple[Key]:
+    __filters = []
+    for filter in filters:
+        operator = filter.get("operator", "eq")
+        if operator == "eq":
+            attr = Key(filter["key"]).eq(filter["value"])
+        elif operator == "gte":
+            attr = Key(filter["key"]).gt(filter["value"])
+        elif operator == "lte":
+            attr = Key(filter["key"]).lt(filter["value"])
+        __filters.append(attr)
+    return tuple(__filters)

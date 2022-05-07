@@ -1,9 +1,11 @@
 default: &default
   REGION: ${opt:region, "eu-west-1"}
   STAGE: ${opt:stage, "dev"}
-  USERNAME: "porthunt"
+  API_KEY_NAME: primer-challenger-api-key
 
 dev:  &dev
+  AWS_ACCOUNT_ID: 859222752922
+  TRANSACTION_TABLE: porthunt-transaction-challenge
   <<: [*default]
 
 prod:

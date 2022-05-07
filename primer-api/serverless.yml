@@ -1,7 +1,11 @@
-service: primer-challenge
+service: primer-challenge-serverless-framework
+frameworkVersion: '3'
 
 custom:
-  vars: ${file(vars.yml):${opt:stage, "self:provider.stage"}, file(vars.yml):dev}
+  vars: ${file(vars.yml):${opt:stage, "self:provider.stage"}, file(vars.yml):dev} 
+  apiKeys:
+    - name: ${self:custom.vars.API_KEY_NAME}
+      value: ${ssm:${self:custom.vars.API_KEY_NAME}}
   serverless-offline:
     host: 0.0.0.0
 
@@ -16,29 +20,43 @@ provider:
   timeout: 10
   environment:
     ENVIRONMENT: ${self:custom.vars.STAGE}
-    USERNAME: ${self:custom.vars.USERNAME}
+    TRANSACTION_TABLE: ${self:custom.vars.TRANSACTION_TABLE}
+  iam:
+    role:
+      name: primer-challenge-serverless-fwk-role
+      statements:
+        - Effect: 'Allow'
+          Action: 
+            - 'dynamodb:Scan'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:GetItem'
+          Resource: 'arn:aws:dynamodb:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:table/${self:custom.vars.TRANSACTION_TABLE}'
 
 plugins:
   - serverless-offline
+  - serverless-add-api-key
+  - serverless-python-requirements
 
 functions:
   populate:
     handler: app.populate_table
     events:
-      - httpApi:
+      - http:
           method: GET
-          path: /populate
+          path: populate
   
   transactions:
     handler: app.transactions
     events:
-      - httpApi:
+      - http:
           method: GET
-          path: /transactions
+          path: transactions
+          private: true
 
   transaction:
     handler: app.transactions
     events:
-      - httpApi:
+      - http:
           method: GET
-          path: /transactions/{id}
+          path: transactions/{id}
+          private: true

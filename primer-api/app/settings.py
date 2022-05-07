@@ -20,5 +20,7 @@ logging.basicConfig(
     format="[%(levelname)s] :: %(message)s", level=retrieve_log_level()
 )
 logger = logging.getLogger("primer-challenge")
-username = os.getenv("USERNAME")
-limit_settings = {"default": 10, "min": 1, "max": 100}
+transaction_table = os.getenv(
+    "TRANSACTION_TABLE", "porthunt-transaction-challenge"
+)
+limit_settings = {"default": 100, "min": 1, "max": 1000}

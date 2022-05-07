@@ -2,13 +2,10 @@ from pydantic import BaseModel
 from app.models.currency import Currency
 from app.models.processor import Processor
 from app.models.merchant import Merchant
-from typing import List, Optional
+from typing import List, Optional, Dict
 from app.aws.dynamodb import retrieve_all, retrieve_item
-from app.settings import username
+from app.settings import transaction_table
 from app.errors import TransactionNotFoundError
-
-
-TRANSACTION_TABLE = f"{username}-transaction-challenge"
 
 
 class Transaction(BaseModel):
@@ -31,9 +28,13 @@ class Transaction(BaseModel):
 
 
 def retrieve_transactions(
-    cursor: Optional[str] = None, limit: Optional[int] = None
+    cursor: Optional[str] = None,
+    limit: Optional[int] = None,
+    filters: Optional[List[Dict[str, str]]] = None,
 ) -> List[Transaction]:
-    response = retrieve_all(TRANSACTION_TABLE, limit=limit, cursor=cursor)
+    response = retrieve_all(
+        transaction_table, limit=limit, cursor=cursor, filters=filters
+    )
     data = {
         "transactions": [
             Transaction(
@@ -56,7 +57,7 @@ def retrieve_transactions(
 
 
 def retrieve_transaction(transaction_id: str) -> Transaction:
-    item = retrieve_item(TRANSACTION_TABLE, {"transaction_id": transaction_id})
+    item = retrieve_item(transaction_table, {"transaction_id": transaction_id})
 
     if not item:
         raise TransactionNotFoundError(transaction_id=transaction_id)

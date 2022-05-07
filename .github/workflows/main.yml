@@ -1,4 +1,4 @@
-name: Execute lint/tests
+name: Deploy
 
 on:
   push:
@@ -47,10 +47,34 @@ jobs:
         run: make unit
         timeout-minutes: 1
 
-  deploy-api:
+  # deploy-api:
+  #   runs-on: ubuntu-20.04
+  #   if: github.base_ref == ''  # skip if PR
+  #   needs: [validate, tests]
+  #   defaults:
+  #     run:
+  #       working-directory: ./primer-api
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     - name: Create ZIP file
+  #       run: zip -q -r ../primer-api.zip app requirements.txt
+
+  #     - name: Upload ZIP to S3
+  #       uses: zdurham/s3-upload-github-action@master
+  #       env:
+  #         FILE: ./primer-api.zip
+  #         AWS_REGION: 'eu-west-1'
+  #         S3_BUCKET: ${{ secrets.BUCKET }}
+  #         S3_KEY: ${{ secrets.S3_KEY }}
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  deploy-apiv2:
+    needs: [validate, tests]
     runs-on: ubuntu-20.04
     if: github.base_ref == ''  # skip if PR
-    needs: [validate, tests]
     defaults:
       run:
         working-directory: ./primer-api
@@ -58,15 +82,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Create ZIP file
-        run: zip -q -r ../primer-api.zip app requirements.txt
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17
 
-      - name: Upload ZIP to S3
-        uses: zdurham/s3-upload-github-action@master
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      
+      - name: Set up environment
+        run: npm install
+
+      - name: Serverless Deploy
+        run: npx serverless deploy --stage dev --conceal
         env:
-          FILE: ./primer-api.zip
-          AWS_REGION: 'eu-west-1'
-          S3_BUCKET: ${{ secrets.BUCKET }}
-          S3_KEY: ${{ secrets.S3_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

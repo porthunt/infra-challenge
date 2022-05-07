@@ -1,6 +1,6 @@
 import boto3
 from app import utils
-from app.settings import username
+from app.settings import transaction_table
 from app.models.transaction import retrieve_transactions, retrieve_transaction
 from app.models.params import validate_params, TransactionsQueryParams
 
@@ -8,7 +8,7 @@ from app.models.params import validate_params, TransactionsQueryParams
 @utils.endpoint
 def populate_table(event, context):
     client = boto3.resource("dynamodb")
-    table = client.Table(f"{username}-transaction-challenge")
+    table = client.Table(transaction_table)
     utils.populate(table)
     return {"message": "transaction table populated"}, 200
 
@@ -24,5 +24,7 @@ def transactions(event, context):
         transaction = retrieve_transaction(transaction_id)
         return transaction.to_json(), 200
     else:
-        data = retrieve_transactions(cursor=params.cursor, limit=params.limit)
+        data = retrieve_transactions(
+            cursor=params.cursor, limit=params.limit, filters=params.filters()
+        )
         return data, 200
