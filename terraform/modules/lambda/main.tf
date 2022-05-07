@@ -45,20 +45,6 @@ resource "aws_iam_policy" "lambda_policy" {
 POLICY
 }
 
-resource "aws_lambda_function" "lambda" {
-  function_name    = var.function_name
-  s3_bucket        = var.s3_bucket
-  s3_key           = var.zip_name
-  handler          = var.handler
-  runtime          = var.runtime
-  timeout          = var.timeout
-  role             = aws_iam_role.lambda_role.arn
-  source_code_hash = var.source_code_hash
-  environment {
-    variables = var.env_variables
-  }
-}
-
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${var.function_name}"
   retention_in_days = 3
@@ -97,4 +83,32 @@ resource "aws_lambda_permission" "lambda_permission" {
   function_name = var.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${var.api_execution_arn}/*/*/*"
+}
+
+data "archive_file" "zip" {
+  type        = "zip"
+  source_dir  = var.source_dir
+  output_path = var.output_path
+}
+resource "aws_s3_bucket_object" "file_upload" {
+  bucket = var.s3_bucket
+  key    = var.s3_key
+  source = data.archive_file.zip.output_path
+}
+
+resource "aws_lambda_function" "lambda" {
+  function_name    = var.function_name
+  s3_bucket        = var.s3_bucket
+  s3_key           = var.zip_name
+  handler          = var.handler
+  runtime          = var.runtime
+  timeout          = var.timeout
+  role             = aws_iam_role.lambda_role.arn
+  source_code_hash = var.source_code_hash
+  environment {
+    variables = var.env_variables
+  }
+  depends_on = [
+    aws_s3_bucket_object.file_upload,
+  ]
 }

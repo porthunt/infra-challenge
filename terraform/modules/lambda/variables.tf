@@ -49,3 +49,18 @@ variable "env_variables" {
   description = "Environment variables that should be set on the lambda function"
   default     = {}
 }
+
+variable "source_dir" {
+  type        = string
+  description = "Path for the source file to be zipped"
+}
+
+variable "output_path" {
+  type        = string
+  description = "Path for the output zip file"
+}
+
+variable "s3_key" {
+  type        = string
+  description = "Key for the file on s3"
+}
