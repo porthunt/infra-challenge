@@ -72,12 +72,15 @@ jobs:
       
       - name: Create ZIP file
         working-directory: ./primer-api
-        run: zip -q -r ../primer-api.zip app requirements.txt
+        run: |
+          pip install --target ./package -r requirements.txt
+          cd package && zip -q -r ../primer-api.zip .
+          zip -g -q -r ../primer-api.zip ../app
       
       - name: Upload ZIP to S3
         uses: zdurham/s3-upload-github-action@master
         env:
-          FILE: ./primer-api.zip
+          FILE: ./primer-api/primer-api.zip
           AWS_REGION: eu-west-1
           S3_BUCKET: ${{ secrets.BUCKET }}
           S3_KEY: primer-api.zip

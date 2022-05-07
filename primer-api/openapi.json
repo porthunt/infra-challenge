@@ -4,6 +4,12 @@
     "title": "primer-challenge",
     "version": "v1"
   },
+  "servers": [
+    {
+      "url": "http://localhost:3000/local",
+      "description": "Local server"
+    }
+  ],
   "paths": {
     "/populate": {
       "post": {
@@ -23,13 +29,19 @@
     },
     "/transactions": {
       "get": {
+        "x-amazon-apigateway-api-key-source": "HEADER",
         "x-amazon-apigateway-integration": {
           "uri": "${transactions_lambda_arn}",
           "passthroughBehavior": "when_no_match",
-          "httpMethod": "POST",
+          "httpMethod": "GET",
           "timeoutInMillis": "${lambda_timeout}",
           "type": "aws_proxy"
         },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -57,13 +69,19 @@
     },
     "/transactions/{id}": {
       "get": {
+        "x-amazon-apigateway-api-key-source": "HEADER",
         "x-amazon-apigateway-integration": {
           "uri": "${transactions_lambda_arn}",
           "passthroughBehavior": "when_no_match",
-          "httpMethod": "POST",
+          "httpMethod": "GET",
           "timeoutInMillis": "${lambda_timeout}",
           "type": "aws_proxy"
         },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -148,6 +166,13 @@
           }
         },
         "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
       }
     }
   }
