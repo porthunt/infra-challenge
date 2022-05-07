@@ -9,6 +9,7 @@ on:
       - 'requirements-dev.txt'
       - '.gitignore'
       - 'terraform/**'
+      - '.github/workflows/tf*'
   workflow_dispatch:
 
 jobs:

@@ -1,0 +1,47 @@
+name: Infrastructure Setup
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/setup/**'
+  pull_request:
+    paths:
+      - 'terraform/setup/**'
+  workflow_dispatch:
+
+
+jobs:
+  tf:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./terraform/setup
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_TOKEN }}
+      
+      - name: Terraform Format
+        run: terraform fmt -recursive -check
+      
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: test
+        run: |
+          pwd
+          ls
+      
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false
