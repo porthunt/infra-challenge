@@ -26,4 +26,7 @@ jobs:
         run: terraform init
       
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
+        run: |
+          terraform destroy -auto-approve \
+          -var="username=${{ secrets.username }}" \
+          -var="api_key=${{secrets.api_key}}"

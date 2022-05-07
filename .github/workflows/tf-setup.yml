@@ -41,7 +41,13 @@ jobs:
         run: terraform validate
       
       - name: Terraform Plan
-        run: terraform plan -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
+        run: |
+          terraform plan \
+          -var="username=${{ secrets.username }}" \
+          -var="api_key=${{secrets.api_key}}"
     
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
+        run: |
+          terraform apply -auto-approve -input=false \
+          -var="username=${{ secrets.username }}" \
+          -var="api_key=${{secrets.api_key}}"
