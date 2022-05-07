@@ -1,0 +1,26 @@
+name: Infrastructure Destroy
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  destroy:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./terraform/playground
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_TOKEN }}
+      
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
