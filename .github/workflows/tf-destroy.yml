@@ -22,5 +22,8 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TERRAFORM_TOKEN }}
       
+      - name: Terraform Init
+        run: terraform init
+      
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -var="username=${{ secrets.username }}" -var="api_key=${{secrets.api_key}}"
