@@ -74,9 +74,11 @@ module "dynamodb" {
 
 ### Add the API gateway
 module "apigateway" {
-  source       = "../modules/apigateway"
-  api_name     = "${var.username}-transaction-api"
-  openapi_file = "../../primer-api/openapi.json"
+  source        = "../modules/apigateway"
+  api_name      = "${var.username}-transaction-api"
+  openapi_file  = "../../primer-api/openapi.json"
+  api_key_name  = "${var.username}-transaction-api-key"
+  api_key_value = var.api_key
   template_vars = {
     region                  = var.aws_region
     transactions_lambda_arn = module.transaction_lambda.invoke_arn

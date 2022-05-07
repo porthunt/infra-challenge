@@ -30,3 +30,14 @@ variable "log_retention" {
   description = "Cloudwatch API Gateway logs retention period"
   default     = 3
 }
+
+variable "api_key_name" {
+  type        = string
+  description = "The API Key name"
+}
+
+variable "api_key_value" {
+  type        = string
+  description = "The API Key value"
+  default     = null
+}

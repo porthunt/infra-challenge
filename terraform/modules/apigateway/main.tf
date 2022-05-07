@@ -10,6 +10,11 @@ resource "aws_api_gateway_rest_api" "api" {
   body = data.template_file.openapi.rendered
 }
 
+resource "aws_api_gateway_api_key" "api_key" {
+  name  = var.api_key_name
+  value = var.api_key_value
+}
+
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.api.id
 
