@@ -5,11 +5,11 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/tf-setup.yml'
-      - 'terraform/playground/**'
+      - 'terraform/**'
   pull_request:
     paths:
       - '.github/workflows/tf-setup.yml'
-      - 'terraform/playground/**'
+      - 'terraform/**'
   workflow_dispatch:
 
 
@@ -40,11 +40,22 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
       
+      - name: Create ZIP file
+        working-directory: ./primer-api
+        run: |
+          pip install --target ./package -r requirements.txt
+          cd package && zip -q -r ../primer-api.zip .
+          zip -g -q -r ../primer-api.zip ../app
+      
       - name: Terraform Plan
         run: |
           terraform plan \
           -var="username=${{ secrets.username }}" \
           -var="api_key=${{secrets.api_key}}"
+
+      - name: test
+        working-directory: ./primer-api
+        run: ls
     
       - name: Terraform Apply
         run: |

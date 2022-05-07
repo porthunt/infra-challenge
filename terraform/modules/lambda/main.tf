@@ -85,15 +85,10 @@ resource "aws_lambda_permission" "lambda_permission" {
   source_arn    = "${var.api_execution_arn}/*/*/*"
 }
 
-data "archive_file" "zip" {
-  type        = "zip"
-  source_dir  = var.source_dir
-  output_path = var.output_path
-}
 resource "aws_s3_bucket_object" "file_upload" {
   bucket = var.s3_bucket
   key    = var.s3_key
-  source = data.archive_file.zip.output_path
+  source = var.source_path
 }
 
 resource "aws_lambda_function" "lambda" {

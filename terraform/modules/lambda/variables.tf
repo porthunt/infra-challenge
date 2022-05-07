@@ -50,14 +50,9 @@ variable "env_variables" {
   default     = {}
 }
 
-variable "source_dir" {
+variable "source_path" {
   type        = string
-  description = "Path for the source file to be zipped"
-}
-
-variable "output_path" {
-  type        = string
-  description = "Path for the output zip file"
+  description = "Path for the zip file that must be uploaded to s3"
 }
 
 variable "s3_key" {

@@ -21,9 +21,8 @@ module "populate_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.populate_table"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_dir        = "../../primer-api"
+  source_path       = "../../primer-api/primer-api.zip"
   s3_key            = "primer-api.zip"
-  output_path       = "primer-api.zip"
   env_variables     = { "USERNAME" : var.username }
   source_code_hash  = base64sha256("./primer-api.zip")
 }
@@ -36,9 +35,8 @@ module "transaction_lambda" {
   s3_bucket         = module.s3.bucket_name
   handler           = "app.transactions"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_dir        = "../../primer-api"
+  source_path       = "../../primer-api/primer-api.zip"
   s3_key            = "primer-api.zip"
-  output_path       = "primer-api.zip"
   env_variables     = { "USERNAME" : var.username }
   source_code_hash  = base64sha256("./primer-api.zip")
 }
