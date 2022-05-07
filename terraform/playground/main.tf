@@ -71,20 +71,6 @@ module "apigateway" {
   }
 }
 
-### Add the Cognito User Pool
-module "cognito" {
-  source      = "../modules/cognito"
-  pool_name   = "${var.username}-primer-challenge"
-  client_name = "${var.username}-primer-api"
-  attributes = [
-    {
-      name    = "role"
-      type    = "String"
-      mutable = true
-    }
-  ]
-}
-
 ### Add the SQS queue
 module "sqs" {
   source     = "../modules/sqs"
@@ -97,4 +83,12 @@ module "s3" {
   source        = "../modules/s3"
   bucket_name   = "primer-challenge-lambda-deployment-a32w0a"
   force_destroy = true
+}
+
+## Add API Key parameter to System Manager
+module "systemmanager" {
+  source      = "../modules/systemmanager"
+  name        = "primer-challenger-api-key"
+  description = "API key for the API"
+  value       = var.api_key
 }

@@ -16,7 +16,7 @@ variable "openapi_file" {
 
 variable "template_vars" {
   type        = any
-  description = "All the variables that should be replaced on the template" 
+  description = "All the variables that should be replaced on the template"
 }
 
 variable "stage" {

@@ -6,3 +6,7 @@ variable "aws_region" {
 variable "username" {
   description = "Your username. Note that every ressource you create must be prepended by your username"
 }
+
+variable "api_key" {
+  description = "The API key that should be used for the API"
+}
