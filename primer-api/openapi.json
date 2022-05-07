@@ -33,7 +33,7 @@
         "x-amazon-apigateway-integration": {
           "uri": "${transactions_lambda_arn}",
           "passthroughBehavior": "when_no_match",
-          "httpMethod": "GET",
+          "httpMethod": "POST",
           "timeoutInMillis": "${lambda_timeout}",
           "type": "aws_proxy"
         },
@@ -51,6 +51,44 @@
             },
             "required": false,
             "description": "Merchant name (case insensitive)"
+          },
+          {
+            "in": "query",
+            "name": "currency",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Currency code (case insensitive)"
+          },
+          {
+            "in": "query",
+            "name": "processor",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Processor name (case insensitive)"
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "Amount to filter (can be used a [gte|lte]:[amount], e.g. gte:400)"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "required": false,
+            "description": "Amount of transactions to be returned"
           }
         ],
         "responses": {
@@ -73,7 +111,7 @@
         "x-amazon-apigateway-integration": {
           "uri": "${transactions_lambda_arn}",
           "passthroughBehavior": "when_no_match",
-          "httpMethod": "GET",
+          "httpMethod": "POST",
           "timeoutInMillis": "${lambda_timeout}",
           "type": "aws_proxy"
         },
