@@ -37,3 +37,9 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "receive_count" {
+  type        = number
+  default     = 5
+  description = "Amount of tries before moving to DLQ"
+}

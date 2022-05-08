@@ -40,7 +40,7 @@ class Transaction(BaseModel):
             "amount": self.amount,
             "currency": self.currency.value.upper(),
             "processor": self.processor.value.upper(),
-            "merchant": self.merchant.value.upper(),
+            "merchant": self.merchant.value.lower(),
         }
 
 
@@ -85,7 +85,7 @@ def retrieve_transaction(transaction_id: str) -> Transaction:
         amount=item["amount"],
         currency=Currency(value=item["currency"].upper()),
         processor=Processor(value=item["processor"].upper()),
-        merchant=Merchant(value=item["merchant"].lower()),
+        merchant=Merchant(value=item["merchant"].upper()),
     )
 
 
