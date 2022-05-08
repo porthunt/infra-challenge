@@ -40,7 +40,13 @@ The point of this job is to execute the functional tests. These tests were creat
 
 > Note: Verify doesn't add a limit, therefore the default is 100. If this job is ran multiple times, it will start failing, since there will be more than 100 transactions on the table and we don't specify a limit on the test. This is not supposed to be ran multiple times. If needed, for some unknown reason, the table must be emptied first.
 
+## Secrets
+These are the secrets on the GitHub repository:
+* `API_KEY`: a random string that will be used as the api key for the `transaction-api` terraform-generated API. Note that we don't need to define a second api key for the serverless API. It will be the same one as `API_KEY` with a `2` appended to the end.
+* `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`: the credentials for the AWS account.
+* `TERRAFORM_TOKEN`: the API token from Terraform Cloud.
+* `USERNAME`: a username that will be used for the created resources.
+
 ## Known issues
 * The pipelines have a plan/apply, but it would be better to have a manual confirmation before applying. I would solve this using 'Environments' on the repository settings and adding people as reviewers, but that feature is not available (only available on GitHub Pro).
 * Current API keys are set for the terraform deployed API and the serverless API. Two different ones must be created, if not, serverless framework complains that it exists already. Therefore, the only difference between them is a "2" at the end of the second one. This was just a workaround to generate a different API Key for the serverless framework API and can (of course) be removed from a final version. It was only for a demostration of a second API that makes developers life easier. **Both APIs have the same configuration.**
-* Invoke URL is printed during the tests on the `verify` job. Not the best way of doing it, but it was the easiest way to provide a URL for a test during a review.
