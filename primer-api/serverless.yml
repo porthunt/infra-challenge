@@ -6,8 +6,15 @@ custom:
   apiKeys:
     - name: ${self:custom.vars.API_KEY_NAME}
       value: ${ssm:${self:custom.vars.API_KEY_NAME}}
-  serverless-offline:
-    host: 0.0.0.0
+      usagePlan:
+        name: ${self:custom.vars.USAGE_PLAN_NAME}
+        quota:
+          limit: 100
+          offset: 2
+          period: WEEK
+        throttle:
+          burstLimit: 5
+          rateLimit: 10
 
 provider:
   name: aws

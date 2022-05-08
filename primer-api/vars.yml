@@ -8,6 +8,7 @@ dev:  &dev
   TRANSACTION_TABLE: porthunt-transaction-challenge
   TRANSACTION_QUEUE: porthunt-primer-challenge-queue
   TRANSACTION_DLQ: porthunt-primer-challenge-queue-DLQ
+  USAGE_PLAN_NAME: porthunt-transaction-challenge-usage-plan
   <<: [*default]
 
 prod:
