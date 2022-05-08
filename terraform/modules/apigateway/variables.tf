@@ -41,3 +41,33 @@ variable "api_key_value" {
   description = "The API Key value"
   default     = null
 }
+
+variable "usage_plan" {
+  type        = bool
+  description = "If a usage plan must be created"
+  default     = true
+}
+
+variable "usage_plan_name" {
+  type        = string
+  description = "Name of the usage plan"
+}
+
+variable "quota_settings_data" {
+  type        = map(any)
+  description = "The quota setting attributes"
+  default = {
+    limit : 100
+    offset : 2
+    period : "WEEK"
+  }
+}
+
+variable "throttle_settings_data" {
+  type        = map(any)
+  description = "The throttle setting attributes"
+  default = {
+    burst_limit : 5
+    rate_limit : 10
+  }
+}

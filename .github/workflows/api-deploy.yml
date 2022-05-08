@@ -56,7 +56,7 @@ jobs:
         run: make unit
         timeout-minutes: 1
 
-  deploy:
+  tf-deploy:
     runs-on: ubuntu-20.04
     needs: [validate, tests]
     defaults:
@@ -100,7 +100,7 @@ jobs:
           -var="api_key=${{secrets.api_key}}"
 
   deploy-serverless-framework-api:
-    needs: [deploy]
+    needs: [tf-deploy]
     runs-on: ubuntu-20.04
     if: github.base_ref == ''  # skip if PR
     defaults:
