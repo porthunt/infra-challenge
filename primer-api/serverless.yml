@@ -47,7 +47,7 @@ functions:
     handler: app.populate_table
     events:
       - http:
-          method: GET
+          method: POST
           path: populate
   
   transactions:

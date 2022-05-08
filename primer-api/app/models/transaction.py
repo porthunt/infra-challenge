@@ -12,6 +12,9 @@ from app.settings import transaction_table, transaction_dlq
 from app.errors import TransactionNotFoundError, InvalidTransactionDataError
 
 
+TRANSACTIONS_TO_POPULATE = 20
+
+
 class Transaction(BaseModel):
     transaction_id: str
     date: str
@@ -118,7 +121,7 @@ def populate(table):
     currencies = ["GBP", "USD", "EUR"]
     merchants = ["mercity", "shopulse", "socart", "bransport"]
 
-    for _ in range(20):
+    for _ in range(TRANSACTIONS_TO_POPULATE):
         entry = {
             "transaction_id": str(uuid.uuid4()),
             "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
