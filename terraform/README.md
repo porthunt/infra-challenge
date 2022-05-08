@@ -36,3 +36,6 @@ An S3 bucket to host the lambda functions code.
 
 ### System Manager
 A parameter stored on Parameter Store, hosting the API key used by the Serverless Framework API (see `primer_api/` for more information).
+
+## Improvements
+* Better separation between the application resources from the infrastructure resources, i.e. first the infrastructure resources like S3 must be created, and then the application resources (lambdas, API Gateway). Currently we must run them at the same time, which will generate a new lambda function everytime an `apply` is ran.

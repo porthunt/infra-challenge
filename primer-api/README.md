@@ -70,4 +70,4 @@ The transaction might get discarded (i.e. sent to the DLQ) if:
 
 ## Improvements
 * I wanted to implement integration with AWS Cognito for the authN/Z, but that would take much longer.
-* Filter transactions by date.
+* Filter transactions by date so it's possible to see just the ones for this day/week.

@@ -9,6 +9,7 @@ on:
       - 'requirements-dev.txt'
       - '.gitignore'
       - '.github/workflows/destroy.yml'
+      - '/github/images/*'
       - 'tests/**'
   workflow_dispatch:
 

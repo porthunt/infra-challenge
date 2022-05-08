@@ -2,7 +2,7 @@
 The objective of this assessment was to deploy a REST API that could retrieve transactions from a DynamoDB table.
 
 ## Architecture
-The `terraform/` directory hosts all the resources that are used. I decided to keep the `playground` directory, since I didn't want to create multiple AWS accounts and manage three environments (dev/qa/prod).
+The `terraform/` directory hosts all the resources that are used. I decided to keep the `playground` directory, since I didn't think it would be useful to create three AWS accounts for each environment (dev/qa/prod).
 
 The lambda functions are zipped and deployed to S3. All of them share the same zip file (more on this later).
 
@@ -11,6 +11,8 @@ It was a requirement to use terraform to deploy the API Gateway + Lambda functio
 To show how this could be done, I decided to have a second API deployed using serverless framework. The lambda functions are all zipped and deployed to S3 on the same file, because I just reuse the code used on this second API.
 
 Please refer to `primer-api/` for more API information or `terraform/` for more infrastructure-related information.
+
+![architecture](.github/images/architecture.jpg)
 
 ## Pipelines
 
