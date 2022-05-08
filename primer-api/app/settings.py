@@ -23,9 +23,6 @@ logger = logging.getLogger("primer-challenge")
 transaction_table = os.getenv(
     "TRANSACTION_TABLE", "porthunt-transaction-challenge"
 )
-transaction_queue = os.getenv(
-    "TRANSACTION_QUEUE", "porthunt-primer-challenge-queue"
-)
 transaction_dlq = os.getenv(
     "TRANSACTION_DLQ", "porthunt-primer-challenge-queue-DLQ"
 )
