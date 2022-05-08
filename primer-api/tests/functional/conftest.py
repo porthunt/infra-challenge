@@ -17,7 +17,9 @@ def pytest_generate_tests(metafunc):
 
 
 def retrieve_api_id(api_name: str) -> str:
-    client = boto3.client("apigateway")
+    client = boto3.client(
+        "apigateway", region_name=os.getenv("AWS_REGION", "eu-west-1")
+    )
     apis = client.get_rest_apis()
     for item in apis["items"]:
         if item["name"] == api_name:

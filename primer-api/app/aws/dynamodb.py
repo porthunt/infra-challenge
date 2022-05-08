@@ -19,10 +19,22 @@ def retrieve_item(table_name: str, key: Dict) -> Optional[Dict]:
         return item.get("Item")
 
 
-def put_item(table_name: str, item: Dict) -> Dict:
+def put_item(
+    table_name: str,
+    item: Dict,
+    allow_update: bool = False,
+    item_hash_key: str = None,
+) -> Dict:
+    if not allow_update and not item_hash_key:
+        raise AttributeError(
+            "If allow_update is False, item_hash_key must be set"
+        )
     resource = create_resource()
     table = resource.Table(table_name)
-    response = table.put_item(Item=item)
+    args = {"Item": item}
+    if not allow_update:
+        args["ConditionExpression"] = f"attribute_not_exists({item_hash_key})"
+    response = table.put_item(**args)
     return response
 
 

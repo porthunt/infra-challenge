@@ -1,8 +1,10 @@
 import boto3
+import pytest
 from moto import mock_dynamodb2
-from tests.unit.mock_dynamodb import TRANSACTIONS
+from tests.unit.mock_dynamodb import TRANSACTIONS, limit_settings
 from app.aws import dynamodb
-from app.settings import limit_settings, transaction_table
+from app.settings import transaction_table
+from botocore.exceptions import ClientError
 
 
 def generate_table(client):
@@ -130,5 +132,38 @@ def test_put_item():
             "processor": "stripe",
             "amount": 400,
         },
+        item_hash_key="foobar",
     )
     assert len(dynamodb.retrieve_all(transaction_table)["Items"]) == 1
+
+
+@mock_dynamodb2
+def test_put_item_conflict():
+    client = boto3.client("dynamodb", region_name="eu-west-1")
+    generate_table(client)
+    dynamodb.put_item(
+        transaction_table,
+        {
+            "transaction_id": "foobar",
+            "date": "05/07/2022, 23:55:32",
+            "merchant": "socart",
+            "currency": "USD",
+            "processor": "stripe",
+            "amount": 400,
+        },
+        item_hash_key="transaction_id",
+    )
+    assert len(dynamodb.retrieve_all(transaction_table)["Items"]) == 1
+    with pytest.raises(ClientError):
+        dynamodb.put_item(
+            transaction_table,
+            {
+                "transaction_id": "foobar",
+                "date": "05/07/2022, 00:55:32",
+                "merchant": "socart",
+                "currency": "USD",
+                "processor": "stripe",
+                "amount": 900,
+            },
+            item_hash_key="transaction_id",
+        )

@@ -35,7 +35,12 @@ def retrieve_item(table: str, key: Dict[str, str]) -> Optional[Dict]:
             return t
 
 
-def put_item(table: str, item: Dict[str, str]) -> Dict:
+def put_item(
+    table: str,
+    item: Dict[str, str],
+    allow_update: bool = False,
+    item_hash_key: str = None,
+) -> Dict:
     pass
 
 

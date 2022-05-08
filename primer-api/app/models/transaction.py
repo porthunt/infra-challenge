@@ -9,7 +9,12 @@ from typing import List, Optional, Dict
 from app.aws.dynamodb import retrieve_all, retrieve_item, put_item
 from app.aws.sqs import send_message
 from app.settings import transaction_table, transaction_dlq
-from app.errors import TransactionNotFoundError, InvalidTransactionDataError
+from app.errors import (
+    TransactionNotFoundError,
+    InvalidTransactionDataError,
+    TransactionConflictError,
+)
+from botocore.exceptions import ClientError
 
 
 TRANSACTIONS_TO_POPULATE = 20
@@ -103,10 +108,17 @@ def create_transaction(item: Dict[str, str]):
             processor=Processor(value=item["processor"].upper()),
             merchant=Merchant(value=item["merchant"].upper()),
         )
-        put_item(transaction_table, transaction.to_json())
+        put_item(
+            transaction_table,
+            transaction.to_json(),
+            item_hash_key="transaction_id",
+        )
     except (ValidationError, ValueError, KeyError):
         send_message(transaction_dlq, item)
         raise InvalidTransactionDataError()
+    except ClientError:
+        send_message(transaction_dlq, item)
+        raise TransactionConflictError()
 
 
 def populate(table):

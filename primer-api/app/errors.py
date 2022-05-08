@@ -41,3 +41,8 @@ class InvalidInputError(Error):
 class InvalidTransactionDataError(Error):
     status_code = 400
     default_message = "The transaction is not valid"
+
+
+class TransactionConflictError(Error):
+    status_code = 409
+    default_message = "Transaction '{transaction_id}' already exists"
