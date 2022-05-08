@@ -92,7 +92,7 @@ resource "aws_lambda_permission" "lambda_permission" {
   action        = "lambda:InvokeFunction"
   function_name = var.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_execution_arn}/*/*/*"
+  source_arn    = "${var.api_execution_arn}/*/*"
 }
 
 resource "aws_s3_bucket_object" "file_upload" {
