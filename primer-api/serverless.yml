@@ -60,3 +60,11 @@ functions:
           method: GET
           path: transactions/{id}
           private: true
+
+  addTransaction:
+    handler: app.add_transaction
+    events:
+      - sqs:
+          arn: arn:aws:sqs:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:${self:custom.vars.TRANSACTION_QUEUE}
+          batchSize: 5
+          maximumBatchingWindow: 60

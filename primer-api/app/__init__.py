@@ -28,3 +28,8 @@ def transactions(event, context):
             cursor=params.cursor, limit=params.limit, filters=params.filters()
         )
         return data, 200
+
+
+def add_transaction(event, context):
+    print(event)
+    return None, 200

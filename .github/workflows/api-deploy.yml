@@ -9,7 +9,8 @@ on:
       - 'requirements-dev.txt'
       - '.gitignore'
       - 'terraform/**'
-      - '.github/workflows/tf*'
+      - '.github/workflows/tf-setup.yml'
+      - '.github/workflows/destroy.yml'
   workflow_dispatch:
 
 jobs:

@@ -107,3 +107,12 @@ resource "aws_lambda_function" "lambda" {
     aws_s3_bucket_object.file_upload,
   ]
 }
+
+resource "aws_lambda_event_source_mapping" "event_source_mapping" {
+  count                              = var.sqs_event ? 1 : 0
+  event_source_arn                   = var.queue_arn
+  enabled                            = true
+  function_name                      = var.function_name
+  batch_size                         = var.batch_size
+  maximum_batching_window_in_seconds = var.maximum_batching_window_in_seconds
+}

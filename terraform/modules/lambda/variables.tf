@@ -59,3 +59,27 @@ variable "s3_key" {
   type        = string
   description = "Key for the file on s3"
 }
+
+variable "sqs_event" {
+  type        = bool
+  description = "Wether an SQS event source mapping should be created for the function"
+  default     = false
+}
+
+variable "queue_arn" {
+  type        = string
+  description = "The ARN for the SQS queue"
+  default     = null
+}
+
+variable "batch_size" {
+  type        = number
+  description = "The amount of messages that a lambda will receive at once"
+  default     = 10
+}
+
+variable "maximum_batching_window_in_seconds" {
+  type        = string
+  description = "Maximum amount in seconds to get messages before invoking function"
+  default     = 60
+}

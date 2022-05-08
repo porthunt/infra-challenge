@@ -41,6 +41,21 @@ module "transaction_lambda" {
   source_code_hash  = base64sha256("./primer-api.zip")
 }
 
+## Build the add transaction Lambda function
+module "add_transaction_lambda" {
+  source            = "../modules/lambda"
+  function_name     = "${var.username}-add-transaction"
+  zip_name          = "primer-api.zip"
+  s3_bucket         = module.s3.bucket_name
+  handler           = "app.add_transaction"
+  api_execution_arn = module.apigateway.api_execution_arn
+  source_path       = "../../primer-api/primer-api.zip"
+  s3_key            = "primer-api.zip"
+  env_variables     = { "USERNAME" : var.username }
+  source_code_hash  = base64sha256("./primer-api.zip")
+  sqs_event         = true
+}
+
 ### Create the dynamodb table
 module "dynamodb" {
   source       = "../modules/dynamodb"
