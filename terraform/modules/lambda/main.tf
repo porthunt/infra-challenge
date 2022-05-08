@@ -39,6 +39,15 @@ resource "aws_iam_policy" "lambda_policy" {
             "Resource": [
                 "*"
             ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "sqs:*"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
 }
@@ -79,6 +88,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 }
 
 resource "aws_lambda_permission" "lambda_permission" {
+  count         = var.api_gateway_event ? 1 : 0
   action        = "lambda:InvokeFunction"
   function_name = var.function_name
   principal     = "apigateway.amazonaws.com"

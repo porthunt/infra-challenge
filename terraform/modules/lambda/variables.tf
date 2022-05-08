@@ -66,6 +66,12 @@ variable "sqs_event" {
   default     = false
 }
 
+variable "api_gateway_event" {
+  type        = bool
+  description = "Wether an API Gateway event should be created for the function"
+  default     = false
+}
+
 variable "queue_arn" {
   type        = string
   description = "The ARN for the SQS queue"

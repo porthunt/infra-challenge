@@ -25,6 +25,7 @@ module "populate_lambda" {
   s3_key            = "primer-api.zip"
   env_variables     = { "USERNAME" : var.username }
   source_code_hash  = base64sha256("./primer-api.zip")
+  api_gateway_event = true
 }
 
 ## Build the transaction Lambda function
@@ -39,6 +40,7 @@ module "transaction_lambda" {
   s3_key            = "primer-api.zip"
   env_variables     = { "USERNAME" : var.username }
   source_code_hash  = base64sha256("./primer-api.zip")
+  api_gateway_event = true
 }
 
 ## Build the add transaction Lambda function
