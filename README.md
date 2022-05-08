@@ -36,7 +36,7 @@ The objective of this job is to deploy the entire terraform infrastructure. It z
 This needs to run after `tf-deploy` since it depends on some resources created by terraform (e.g. S3 bucket, API key on parameter store, etc). The point of this job is to deploy the API created using serverless framework.
 
 #### verify
-The point of this job is to execute the functional tests. These tests were created just to validate that the endpoints are deployed, the api key works as expected and the responses are correct. It was only created to show that everything is working correctly. In a real-world scenario, this would run with `validate/tests` using a locally deployed API (using serverless-offline, for example).
+The point of this job is to execute the functional tests. These tests were created just to validate that the endpoints are deployed, the api key works as expected and the responses are correct. It was only created to show that everything is working correctly. In a real-world scenario, this would run with `validate/tests` using a locally deployed API (using serverless-offline, for example). The Invoke URL is printed before the tests results, so requests can be done locally.
 
 > Note: Verify doesn't add a limit, therefore the default is 100. If this job is ran multiple times, it will start failing, since there will be more than 100 transactions on the table and we don't specify a limit on the test. This is not supposed to be ran multiple times. If needed, for some unknown reason, the table must be emptied first.
 

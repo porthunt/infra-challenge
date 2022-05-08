@@ -5,6 +5,7 @@ from app.settings import transaction_table
 
 
 def test_populate(url):
+    print(f"Invoke URL: {url}")
     before = len(retrieve_all(transaction_table)["Items"])
     response = requests.post(f"{url}/populate")
     assert response.status_code == 200

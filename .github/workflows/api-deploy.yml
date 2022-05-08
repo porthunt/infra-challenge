@@ -150,9 +150,9 @@ jobs:
         run: make init
 
       - name: Verify endpoints - terraform lambdas
-        run: pytest tests/functional --api porthunt-transaction-api
+        run: pytest tests/functional --api porthunt-transaction-api -s
         timeout-minutes: 1
       
       - name: Verify endpoints - serverless framework
-        run: pytest tests/functional --api dev-primer-challenge-serverless-framework
+        run: pytest tests/functional --api dev-primer-challenge-serverless-framework -s
         timeout-minutes: 1
