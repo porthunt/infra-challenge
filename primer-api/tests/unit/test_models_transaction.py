@@ -37,7 +37,7 @@ def test_retrieve_transaction(transaction_mock):
     assert type(item) == transaction.Transaction
     assert item.amount == 1
     assert item.currency.value == "USD"
-    assert item.merchant.value == "SOCART"
+    assert item.merchant == "FOO"
     assert item.processor.value == "INGENICO"
 
 
@@ -69,22 +69,6 @@ def test_create_transaction_invalid_currency(
                 "date": "05/07/2022, 23:55:32",
                 "merchant": "socart",
                 "currency": "BRL",
-                "processor": "stripe",
-                "amount": 400,
-            }
-        )
-
-
-def test_create_transaction_invalid_merchant(
-    add_transaction_mock, send_message_mock
-):
-    with pytest.raises(InvalidTransactionDataError):
-        transaction.create_transaction(
-            {
-                "transaction_id": "foobar",
-                "date": "05/07/2022, 23:55:32",
-                "merchant": "merchantA",
-                "currency": "USD",
                 "processor": "stripe",
                 "amount": 400,
             }

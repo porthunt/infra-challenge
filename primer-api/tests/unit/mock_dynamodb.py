@@ -7,7 +7,7 @@ TRANSACTIONS = [
         "amount": 1,
         "currency": "USD",
         "date": "05/05/2022, 18:13:21",
-        "merchant": "socart",
+        "merchant": "foo",
         "processor": "INGENICO",
     },
     {

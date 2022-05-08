@@ -4,7 +4,6 @@ from datetime import datetime
 from pydantic import BaseModel, ValidationError, validator
 from app.models.currency import Currency
 from app.models.processor import Processor
-from app.models.merchant import Merchant
 from typing import List, Optional, Dict
 from app.aws.dynamodb import retrieve_all, retrieve_item, put_item
 from app.aws.sqs import send_message
@@ -26,7 +25,7 @@ class Transaction(BaseModel):
     amount: int
     currency: Currency
     processor: Processor
-    merchant: Merchant
+    merchant: str
 
     @validator("date")
     def validate_date_format(cls, v):
@@ -49,7 +48,7 @@ class Transaction(BaseModel):
             "amount": self.amount,
             "currency": self.currency.value.upper(),
             "processor": self.processor.value.upper(),
-            "merchant": self.merchant.value.lower(),
+            "merchant": self.merchant.lower(),
         }
 
 
@@ -69,7 +68,7 @@ def retrieve_transactions(
                 amount=item["amount"],
                 currency=Currency(value=item["currency"].upper()),
                 processor=Processor(value=item["processor"].upper()),
-                merchant=Merchant(value=item["merchant"].upper()),
+                merchant=item["merchant"].upper(),
             ).to_json()
             for item in response["Items"]
         ],
@@ -94,7 +93,7 @@ def retrieve_transaction(transaction_id: str) -> Transaction:
         amount=item["amount"],
         currency=Currency(value=item["currency"].upper()),
         processor=Processor(value=item["processor"].upper()),
-        merchant=Merchant(value=item["merchant"].upper()),
+        merchant=item["merchant"].upper(),
     )
 
 
@@ -106,7 +105,7 @@ def create_transaction(item: Dict[str, str]):
             amount=item["amount"],
             currency=Currency(value=item["currency"].upper()),
             processor=Processor(value=item["processor"].upper()),
-            merchant=Merchant(value=item["merchant"].upper()),
+            merchant=item["merchant"].upper(),
         )
         put_item(
             transaction_table,

@@ -16,7 +16,7 @@ def test_populate(url):
 def test_retrieve_transactions(url, api_key):
     dynamo_items = retrieve_all(transaction_table)["Items"]
     response = requests.get(
-        f"{url}/transactions", headers={"x-api-key": api_key}
+        f"{url}/transactions?limit=1000", headers={"x-api-key": api_key}
     )
     assert response.status_code == 200
     if len(dynamo_items) > 0:
