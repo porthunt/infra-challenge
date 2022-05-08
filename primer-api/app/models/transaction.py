@@ -1,10 +1,12 @@
-from pydantic import BaseModel, ValidationError, validator
+import uuid
+import random
 from datetime import datetime
+from pydantic import BaseModel, ValidationError, validator
 from app.models.currency import Currency
 from app.models.processor import Processor
 from app.models.merchant import Merchant
 from typing import List, Optional, Dict
-from app.aws.dynamodb import retrieve_all, retrieve_item
+from app.aws.dynamodb import retrieve_all, retrieve_item, put_item
 from app.settings import transaction_table
 from app.errors import TransactionNotFoundError, InvalidTransactionDataError
 
@@ -83,7 +85,7 @@ def retrieve_transaction(transaction_id: str) -> Transaction:
         amount=item["amount"],
         currency=Currency(value=item["currency"].upper()),
         processor=Processor(value=item["processor"].upper()),
-        merchant=Merchant(value=item["merchant"].upper()),
+        merchant=Merchant(value=item["merchant"].lower()),
     )
 
 
@@ -97,7 +99,32 @@ def create_transaction(item: Dict[str, str]):
             processor=Processor(value=item["processor"].upper()),
             merchant=Merchant(value=item["merchant"].upper()),
         )
-        print(transaction)
-        # add to dynamodb
-    except (ValidationError, ValueError):
+        put_item(transaction_table, transaction.to_json())
+    except (ValidationError, ValueError, KeyError) as e:
+        print(e)
         raise InvalidTransactionDataError()
+
+
+def populate(table):
+    processors = [
+        "BRAINTREE",
+        "ADYEN",
+        "STRIPE",
+        "PAYPAL",
+        "GOCARDLESS",
+        "INGENICO",
+    ]
+    currencies = ["GBP", "USD", "EUR"]
+    merchants = ["mercity", "shopulse", "socart", "bransport"]
+
+    for _ in range(20):
+        entry = {
+            "transaction_id": str(uuid.uuid4()),
+            "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
+            "amount": random.randrange(1, 4000),
+            "currency": random.choice(currencies),
+            "processor": random.choice(processors),
+            "merchant": random.choice(merchants),
+        }
+        table.put_item(Item=entry)
+    return True

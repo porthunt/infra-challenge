@@ -19,6 +19,13 @@ def retrieve_item(table_name: str, key: Dict) -> Optional[Dict]:
         return item.get("Item")
 
 
+def put_item(table_name: str, item: Dict) -> Dict:
+    resource = create_resource()
+    table = resource.Table(table_name)
+    response = table.put_item(Item=item)
+    return response
+
+
 def retrieve_all(
     table_name: str,
     limit: Optional[int] = limit_settings["default"],

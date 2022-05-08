@@ -113,3 +113,22 @@ def test_retrieve_all_cursor_limit():
     assert response["limit"] == 1
     assert response["Items"][0] == TRANSACTIONS[1]
     assert response["LastEvaluatedKey"]["transaction_id"] == "yyy"
+
+
+@mock_dynamodb2
+def test_put_item():
+    client = boto3.client("dynamodb", region_name="eu-west-1")
+    generate_table(client)
+    assert len(dynamodb.retrieve_all(transaction_table)["Items"]) == 0
+    dynamodb.put_item(
+        transaction_table,
+        {
+            "transaction_id": "foobar",
+            "date": "05/07/2022, 23:55:32",
+            "merchant": "socart",
+            "currency": "USD",
+            "processor": "stripe",
+            "amount": 400,
+        },
+    )
+    assert len(dynamodb.retrieve_all(transaction_table)["Items"]) == 1

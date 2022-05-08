@@ -1,7 +1,4 @@
-import uuid
-import random
 import json
-from datetime import datetime
 from typing import Callable
 from app.settings import logger
 from app.errors import Error, UnexpectedError
@@ -35,28 +32,3 @@ def get_payload(event):
 def get_query_params(event):
     params = event.get("queryStringParameters")
     return params if params else {}
-
-
-def populate(table):
-    processors = [
-        "BRAINTREE",
-        "ADYEN",
-        "STRIPE",
-        "PAYPAL",
-        "GOCARDLESS",
-        "INGENICO",
-    ]
-    currencies = ["GBP", "USD", "EUR"]
-    merchants = ["mercity", "shopulse", "socart", "bransport"]
-
-    for _ in range(20):
-        entry = {
-            "transaction_id": str(uuid.uuid4()),
-            "date": datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
-            "amount": random.randrange(1, 4000),
-            "currency": random.choice(currencies),
-            "processor": random.choice(processors),
-            "merchant": random.choice(merchants),
-        }
-        table.put_item(Item=entry)
-    return True

@@ -35,6 +35,10 @@ def retrieve_item(table: str, key: Dict[str, str]) -> Optional[Dict]:
             return t
 
 
+def put_item(table: str, item: Dict[str, str]) -> Dict:
+    pass
+
+
 def retrieve_all(
     table: str,
     limit: Optional[int] = limit_settings["default"],

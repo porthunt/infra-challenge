@@ -1,7 +1,9 @@
 import pytest
 from app.models import transaction
-from app.errors import TransactionNotFoundError
+from app.errors import TransactionNotFoundError, InvalidTransactionDataError
 from app.settings import limit_settings
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 def test_retrieve_transactions(transactions_mock):
@@ -42,3 +44,82 @@ def test_retrieve_transaction(transaction_mock):
 def test_retrieve_inexistent_transaction(transaction_mock):
     with pytest.raises(TransactionNotFoundError):
         transaction.retrieve_transaction("aaa")
+
+
+def test_create_transaction(add_transaction_mock):
+    transaction.create_transaction(
+        {
+            "transaction_id": "foobar",
+            "date": "05/07/2022, 23:55:32",
+            "merchant": "socart",
+            "currency": "USD",
+            "processor": "stripe",
+            "amount": 400,
+        }
+    )
+
+
+def test_create_transaction_invalid_currency(add_transaction_mock):
+    with pytest.raises(InvalidTransactionDataError):
+        transaction.create_transaction(
+            {
+                "transaction_id": "foobar",
+                "date": "05/07/2022, 23:55:32",
+                "merchant": "socart",
+                "currency": "BRL",
+                "processor": "stripe",
+                "amount": 400,
+            }
+        )
+
+
+def test_create_transaction_invalid_merchant(add_transaction_mock):
+    with pytest.raises(InvalidTransactionDataError):
+        transaction.create_transaction(
+            {
+                "transaction_id": "foobar",
+                "date": "05/07/2022, 23:55:32",
+                "merchant": "merchantA",
+                "currency": "USD",
+                "processor": "stripe",
+                "amount": 400,
+            }
+        )
+
+
+def test_create_transaction_invalid_processor(add_transaction_mock):
+    with pytest.raises(InvalidTransactionDataError):
+        transaction.create_transaction(
+            {
+                "transaction_id": "foobar",
+                "date": "05/07/2022, 23:55:32",
+                "merchant": "socart",
+                "currency": "USD",
+                "processor": "processorA",
+                "amount": 400,
+            }
+        )
+
+
+def test_create_transaction_invalid_body(add_transaction_mock):
+    with pytest.raises(InvalidTransactionDataError):
+        transaction.create_transaction(
+            {
+                "transaction_id": "foobar",
+            }
+        )
+
+
+def test_create_transaction_invalid_date(add_transaction_mock):
+    date = datetime.now() + relativedelta(years=2)
+    with pytest.raises(InvalidTransactionDataError):
+        transaction.create_transaction(
+            {
+                "transaction_id": "foobar",
+                "date": date.strftime("%m/%d/%Y, %H:%M:%S"),
+                "merchant": "socart",
+                "currency": "USD",
+                "processor": "stripe",
+                "amount": 400,
+            }
+        )

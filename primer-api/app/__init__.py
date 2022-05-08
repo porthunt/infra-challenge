@@ -6,6 +6,7 @@ from app.models.transaction import (
     retrieve_transactions,
     retrieve_transaction,
     create_transaction,
+    populate,
 )
 from app.models.params import validate_params, TransactionsQueryParams
 from app.errors import InvalidTransactionDataError
@@ -15,7 +16,7 @@ from app.errors import InvalidTransactionDataError
 def populate_table(event, context):
     client = boto3.resource("dynamodb")
     table = client.Table(transaction_table)
-    utils.populate(table)
+    populate(table)
     return {"message": "transaction table populated"}, 200
 
 
