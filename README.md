@@ -45,7 +45,7 @@ These are the secrets on the GitHub repository:
 * `API_KEY`: a random string that will be used as the api key for the `transaction-api` terraform-generated API. Note that we don't need to define a second api key for the serverless API. It will be the same one as `API_KEY` with a `2` appended to the end.
 * `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`: the credentials for the AWS account.
 * `TERRAFORM_TOKEN`: the API token from Terraform Cloud.
-* `USERNAME`: a username that will be used for the created resources.
+* `USERNAME`: a username that will be used for the created resources, in this case, `porthunt`.
 
 ## Known issues
 * The pipelines have a plan/apply, but it would be better to have a manual confirmation before applying. I would solve this using 'Environments' on the repository settings and adding people as reviewers, but that feature is not available (only available on GitHub Pro).
