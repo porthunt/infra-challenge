@@ -7,7 +7,8 @@ from app.models.processor import Processor
 from app.models.merchant import Merchant
 from typing import List, Optional, Dict
 from app.aws.dynamodb import retrieve_all, retrieve_item, put_item
-from app.settings import transaction_table
+from app.aws.sqs import send_message
+from app.settings import transaction_table, transaction_dlq
 from app.errors import TransactionNotFoundError, InvalidTransactionDataError
 
 
@@ -100,8 +101,8 @@ def create_transaction(item: Dict[str, str]):
             merchant=Merchant(value=item["merchant"].upper()),
         )
         put_item(transaction_table, transaction.to_json())
-    except (ValidationError, ValueError, KeyError) as e:
-        print(e)
+    except (ValidationError, ValueError, KeyError):
+        send_message(transaction_dlq, item)
         raise InvalidTransactionDataError()
 
 

@@ -46,7 +46,7 @@ def test_retrieve_inexistent_transaction(transaction_mock):
         transaction.retrieve_transaction("aaa")
 
 
-def test_create_transaction(add_transaction_mock):
+def test_create_transaction(add_transaction_mock, send_message_mock):
     transaction.create_transaction(
         {
             "transaction_id": "foobar",
@@ -59,7 +59,9 @@ def test_create_transaction(add_transaction_mock):
     )
 
 
-def test_create_transaction_invalid_currency(add_transaction_mock):
+def test_create_transaction_invalid_currency(
+    add_transaction_mock, send_message_mock
+):
     with pytest.raises(InvalidTransactionDataError):
         transaction.create_transaction(
             {
@@ -73,7 +75,9 @@ def test_create_transaction_invalid_currency(add_transaction_mock):
         )
 
 
-def test_create_transaction_invalid_merchant(add_transaction_mock):
+def test_create_transaction_invalid_merchant(
+    add_transaction_mock, send_message_mock
+):
     with pytest.raises(InvalidTransactionDataError):
         transaction.create_transaction(
             {
@@ -87,7 +91,9 @@ def test_create_transaction_invalid_merchant(add_transaction_mock):
         )
 
 
-def test_create_transaction_invalid_processor(add_transaction_mock):
+def test_create_transaction_invalid_processor(
+    add_transaction_mock, send_message_mock
+):
     with pytest.raises(InvalidTransactionDataError):
         transaction.create_transaction(
             {
@@ -101,7 +107,9 @@ def test_create_transaction_invalid_processor(add_transaction_mock):
         )
 
 
-def test_create_transaction_invalid_body(add_transaction_mock):
+def test_create_transaction_invalid_body(
+    add_transaction_mock, send_message_mock
+):
     with pytest.raises(InvalidTransactionDataError):
         transaction.create_transaction(
             {
@@ -110,7 +118,9 @@ def test_create_transaction_invalid_body(add_transaction_mock):
         )
 
 
-def test_create_transaction_invalid_date(add_transaction_mock):
+def test_create_transaction_invalid_date(
+    add_transaction_mock, send_message_mock
+):
     date = datetime.now() + relativedelta(years=2)
     with pytest.raises(InvalidTransactionDataError):
         transaction.create_transaction(

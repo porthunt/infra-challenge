@@ -23,4 +23,7 @@ logger = logging.getLogger("primer-challenge")
 transaction_table = os.getenv(
     "TRANSACTION_TABLE", "porthunt-transaction-challenge"
 )
+transaction_dlq = os.getenv(
+    "TRANSACTION_DLQ", "porthunt-primer-challenge-queue-DLQ"
+)
 limit_settings = {"default": 100, "min": 1, "max": 1000}

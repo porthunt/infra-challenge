@@ -23,7 +23,10 @@ module "populate_lambda" {
   api_execution_arn = module.apigateway.api_execution_arn
   source_path       = "../../primer-api/primer-api.zip"
   s3_key            = "primer-api.zip"
-  env_variables     = { "USERNAME" : var.username }
+  env_variables = {
+    "USERNAME" : var.username,
+    "TRANSACTION_TABLE" : module.dynamodb.table_name
+  }
   source_code_hash  = base64sha256("./primer-api.zip")
   api_gateway_event = true
 }
@@ -38,7 +41,10 @@ module "transaction_lambda" {
   api_execution_arn = module.apigateway.api_execution_arn
   source_path       = "../../primer-api/primer-api.zip"
   s3_key            = "primer-api.zip"
-  env_variables     = { "USERNAME" : var.username }
+  env_variables = {
+    "USERNAME" : var.username,
+    "TRANSACTION_TABLE" : module.dynamodb.table_name
+  }
   source_code_hash  = base64sha256("./primer-api.zip")
   api_gateway_event = true
 }
@@ -53,10 +59,14 @@ module "add_transaction_lambda" {
   api_execution_arn = module.apigateway.api_execution_arn
   source_path       = "../../primer-api/primer-api.zip"
   s3_key            = "primer-api.zip"
-  env_variables     = { "USERNAME" : var.username }
-  source_code_hash  = base64sha256("./primer-api.zip")
-  sqs_event         = true
-  queue_arn         = module.sqs.sqs_arn
+  env_variables = {
+    "USERNAME" : var.username,
+    "TRANSACTION_TABLE" : module.dynamodb.table_name,
+    "TRANSACTION_DLQ" : module.sqs.dlq_name
+  }
+  source_code_hash = base64sha256("./primer-api.zip")
+  sqs_event        = true
+  queue_arn        = module.sqs.sqs_arn
 }
 
 ### Create the dynamodb table

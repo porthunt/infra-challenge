@@ -21,6 +21,7 @@ provider:
   environment:
     ENVIRONMENT: ${self:custom.vars.STAGE}
     TRANSACTION_TABLE: ${self:custom.vars.TRANSACTION_TABLE}
+    TRANSACTION_DLQ: ${self:custom.vars.TRANSACTION_DLQ}
   iam:
     role:
       name: primer-challenge-serverless-fwk-role
@@ -31,6 +32,10 @@ provider:
             - 'dynamodb:PutItem'
             - 'dynamodb:GetItem'
           Resource: 'arn:aws:dynamodb:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:table/${self:custom.vars.TRANSACTION_TABLE}'
+        - Effect: 'Allow'
+          Action: 
+            - 'sqs:SendMessage'
+          Resource: 'arn:aws:sqs:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:${self:custom.vars.TRANSACTION_DLQ}'
 
 plugins:
   - serverless-offline

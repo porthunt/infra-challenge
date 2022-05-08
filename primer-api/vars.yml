@@ -7,6 +7,7 @@ dev:  &dev
   AWS_ACCOUNT_ID: 859222752922
   TRANSACTION_TABLE: porthunt-transaction-challenge
   TRANSACTION_QUEUE: porthunt-primer-challenge-queue
+  TRANSACTION_DLQ: porthunt-primer-challenge-queue-DLQ
   <<: [*default]
 
 prod:
