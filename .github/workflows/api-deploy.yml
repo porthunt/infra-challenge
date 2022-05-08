@@ -4,12 +4,14 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - 'README.md'
       - 'Makefile'
       - 'requirements-dev.txt'
       - '.gitignore'
       - '.github/workflows/destroy.yml'
       - 'tests/**'
+      - 'README.md'
+      - 'primer-api/README.md'
+      - 'terraform/README.md'
   workflow_dispatch:
 
 jobs:

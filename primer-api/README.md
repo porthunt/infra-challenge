@@ -59,7 +59,7 @@ Retrieves a specific transaction information in case it is available.
 ### Add transactions
 This is **not** and endpoint. Transactions are added through an SQS queue. This is done to avoid multiple lambda functions being spawned for each transaction added. The queue can host multiple messages and a lambda function processes them at once.
 
-The transaction might get discarded if:
+The transaction might get discarded (i.e. sent to the DLQ) if:
 * There is an issue with the body of the message;
 * Invalid attributes (e.g. currency that is not defined, a date 2 years from now, etc);
 * The `transaction_id` exists on the table already.
@@ -70,3 +70,4 @@ The transaction might get discarded if:
 
 ## Improvements
 * I wanted to implement integration with AWS Cognito for the authN/Z, but that would take much longer.
+* Filter transactions by date.
