@@ -54,6 +54,7 @@ module "add_transaction_lambda" {
   env_variables     = { "USERNAME" : var.username }
   source_code_hash  = base64sha256("./primer-api.zip")
   sqs_event         = true
+  queue_arn         = module.sqs.sqs_arn
 }
 
 ### Create the dynamodb table

@@ -109,6 +109,7 @@ resource "aws_lambda_function" "lambda" {
 }
 
 resource "aws_lambda_event_source_mapping" "event_source_mapping" {
+  depends_on                         = [aws_lambda_function.lambda]
   count                              = var.sqs_event ? 1 : 0
   event_source_arn                   = var.queue_arn
   enabled                            = true
