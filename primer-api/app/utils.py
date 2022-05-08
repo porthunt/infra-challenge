@@ -1,5 +1,5 @@
 import json
-from typing import Callable
+from typing import Callable, Dict
 from app.settings import logger
 from app.errors import Error, UnexpectedError
 
@@ -19,16 +19,16 @@ def endpoint(func: Callable):
     return wrapper
 
 
-def get_params(event):
+def get_params(event) -> Dict[str, str]:
     params = event["pathParameters"]
     return params if params else {}
 
 
-def get_payload(event):
+def get_payload(event) -> Dict[str, str]:
     body = json.loads(event["body"])
     return body if body else {}
 
 
-def get_query_params(event):
+def get_query_params(event) -> Dict[str, str]:
     params = event.get("queryStringParameters")
     return params if params else {}

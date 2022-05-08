@@ -13,7 +13,7 @@ class TransactionsQueryParams(BaseModel, extra=Extra.forbid):
     processor: Optional[str]
     currency: Optional[str]
     amount: Optional[str] = Field(
-        regex=r"^((gte|lte):)?\d+$",
+        regex=r"^((gte|lte):)?[+]?\d+([.]\d+)?$",
         description="Format should be [gte|lte]:[int]",
     )
 
