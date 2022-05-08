@@ -1,14 +1,14 @@
 default: &default
   REGION: ${opt:region, "eu-west-1"}
   STAGE: ${opt:stage, "dev"}
-  API_KEY_NAME: primer-challenger-api-key
+  API_KEY_NAME: primer-challenge-api-key
 
 dev:  &dev
   AWS_ACCOUNT_ID: 859222752922
   TRANSACTION_TABLE: porthunt-transaction-challenge
   TRANSACTION_QUEUE: porthunt-primer-challenge-queue
   TRANSACTION_DLQ: porthunt-primer-challenge-queue-DLQ
-  USAGE_PLAN_NAME: porthunt-transaction-challenge-usage-plan
+  USAGE_PLAN_NAME: porthunt-primer-challenge-usage-plan
   <<: [*default]
 
 prod:

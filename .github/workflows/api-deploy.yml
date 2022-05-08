@@ -9,6 +9,7 @@ on:
       - 'requirements-dev.txt'
       - '.gitignore'
       - '.github/workflows/destroy.yml'
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:
@@ -91,13 +92,15 @@ jobs:
         run: |
           terraform plan \
           -var="username=${{ secrets.username }}" \
-          -var="api_key=${{secrets.api_key}}"
+          -var="api_key=${{secrets.api_key}}" \
+          -var="serverless_api_key=${{secrets.api_key}}2"
 
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve -input=false \
           -var="username=${{ secrets.username }}" \
-          -var="api_key=${{secrets.api_key}}"
+          -var="api_key=${{secrets.api_key}}" \
+          -var="serverless_api_key=${{secrets.api_key}}2"
 
   deploy-serverless-framework-api:
     needs: [tf-deploy]

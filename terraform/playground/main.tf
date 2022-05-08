@@ -130,10 +130,12 @@ module "s3" {
   force_destroy = true
 }
 
-## Add API Key parameter to System Manager
+# Add API Key parameter to System Manager
+# This resource will be used by the alternative
+# API that was created using Serverless Framework
 module "systemmanager" {
   source      = "../modules/systemmanager"
-  name        = "primer-challenger-api-key"
-  description = "API key for the API"
-  value       = var.api_key
+  name        = "primer-challenge-api-key"
+  description = "API key for the API (Serverless Framework)"
+  value       = var.serverless_api_key
 }
