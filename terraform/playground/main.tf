@@ -112,7 +112,7 @@ module "apigateway" {
     region                  = var.aws_region
     transactions_lambda_arn = module.transaction_lambda.invoke_arn
     populate_lambda_arn     = module.populate_lambda.invoke_arn
-    lambda_timeout          = 3000
+    lambda_timeout          = 10000
   }
 }
 
