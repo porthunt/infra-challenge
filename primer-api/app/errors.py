@@ -36,3 +36,8 @@ class TransactionNotFoundError(Error):
 class InvalidInputError(Error):
     status_code = 400
     default_message = "Invalid input"
+
+
+class InvalidTransactionDataError(Error):
+    status_code = 400
+    default_message = "The transaction is not valid"

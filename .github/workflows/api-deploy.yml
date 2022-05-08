@@ -99,74 +99,32 @@ jobs:
           -var="username=${{ secrets.username }}" \
           -var="api_key=${{secrets.api_key}}"
 
-  # deploy-api:
-  #   runs-on: ubuntu-20.04
-  #   needs: [validate, tests]
-  #   defaults:
-  #     run:
-  #       working-directory: ./terraform/playground
-  #   env:
-  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  deploy-serverless-framework-api:
+    needs: [deploy]
+    runs-on: ubuntu-20.04
+    if: github.base_ref == ''  # skip if PR
+    defaults:
+      run:
+        working-directory: ./primer-api
 
-  #   steps:
-  #     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v1
-  #       with:
-  #         cli_config_credentials_token: ${{ secrets.TERRAFORM_TOKEN }}
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17
 
-  #     - name: Terraform Init
-  #       run: terraform init
-
-  #     - name: Create ZIP file
-  #       working-directory: ./primer-api
-  #       run: |
-  #         pip install --target ./package -r requirements.txt
-  #         cd package && zip -q -r ../primer-api.zip .
-  #         zip -g -q -r ../primer-api.zip ../app
-
-  #     - name: Upload ZIP to S3
-  #       uses: zdurham/s3-upload-github-action@master
-  #       env:
-  #         FILE: ./primer-api/primer-api.zip
-  #         AWS_REGION: eu-west-1
-  #         S3_BUCKET: ${{ secrets.BUCKET }}
-  #         S3_KEY: primer-api.zip
-
-  #     - name: Lambda Deploy
-  #       run: |
-  #         terraform apply -auto-approve -input=false \
-  #           -var="username=${{ secrets.username }}" \
-  #           -var="api_key=${{ secrets.api_key }}"
-
-  # deploy-serverless-framework-api:
-  #   needs: [validate, tests]
-  #   runs-on: ubuntu-20.04
-  #   if: github.base_ref == ''  # skip if PR
-  #   defaults:
-  #     run:
-  #       working-directory: ./primer-api
-
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: Set up Node
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 17
-
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.8
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
       
-  #     - name: Set up environment
-  #       run: npm install
+      - name: Set up environment
+        run: npm install
 
-  #     - name: Serverless Deploy
-  #       run: npx serverless deploy --stage dev --conceal
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Serverless Deploy
+        run: npx serverless deploy --stage dev --conceal
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

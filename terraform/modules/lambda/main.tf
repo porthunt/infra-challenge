@@ -99,6 +99,7 @@ resource "aws_s3_bucket_object" "file_upload" {
   bucket = var.s3_bucket
   key    = var.s3_key
   source = var.source_path
+  etag   = filemd5(var.source_path)
 }
 
 resource "aws_lambda_function" "lambda" {

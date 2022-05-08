@@ -1,11 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError, validator
+from datetime import datetime
 from app.models.currency import Currency
 from app.models.processor import Processor
 from app.models.merchant import Merchant
 from typing import List, Optional, Dict
 from app.aws.dynamodb import retrieve_all, retrieve_item
 from app.settings import transaction_table
-from app.errors import TransactionNotFoundError
+from app.errors import TransactionNotFoundError, InvalidTransactionDataError
 
 
 class Transaction(BaseModel):
@@ -15,6 +16,20 @@ class Transaction(BaseModel):
     currency: Currency
     processor: Processor
     merchant: Merchant
+
+    @validator("date")
+    def validate_date_format(cls, v):
+        try:
+            format = "%m/%d/%Y, %H:%M:%S"
+            transaction_date = datetime.strptime(v, format)
+            if transaction_date > datetime.now():
+                raise InvalidTransactionDataError(
+                    message="Invalid constraint: transaction "
+                    "datetime after current time"
+                )
+        except ValueError:
+            raise ValueError("Invalid date format")
+        return v
 
     def to_json(self):
         return {
@@ -70,3 +85,19 @@ def retrieve_transaction(transaction_id: str) -> Transaction:
         processor=Processor(value=item["processor"].upper()),
         merchant=Merchant(value=item["merchant"].upper()),
     )
+
+
+def create_transaction(item: Dict[str, str]):
+    try:
+        transaction = Transaction(
+            transaction_id=item["transaction_id"],
+            date=item["date"],
+            amount=item["amount"],
+            currency=Currency(value=item["currency"].upper()),
+            processor=Processor(value=item["processor"].upper()),
+            merchant=Merchant(value=item["merchant"].upper()),
+        )
+        print(transaction)
+        # add to dynamodb
+    except (ValidationError, ValueError):
+        raise InvalidTransactionDataError()
