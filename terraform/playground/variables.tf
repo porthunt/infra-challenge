@@ -10,7 +10,3 @@ variable "username" {
 variable "api_key" {
   description = "The API key that should be used for the API"
 }
-
-variable "serverless_api_key" {
-  description = "The API key that should be stored on system manager for the serverless framework api"
-}

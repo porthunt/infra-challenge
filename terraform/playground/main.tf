@@ -137,5 +137,5 @@ module "systemmanager" {
   source      = "../modules/systemmanager"
   name        = "primer-challenge-api-key"
   description = "API key for the API (Serverless Framework)"
-  value       = var.serverless_api_key
+  value       = "${var.api_key}2"
 }

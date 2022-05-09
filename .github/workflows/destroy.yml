@@ -62,5 +62,4 @@ jobs:
           touch ../../primer-api/primer-api.zip
           terraform destroy -auto-approve \
           -var="username=${{ secrets.username }}" \
-          -var="api_key=${{secrets.api_key}}" \
-          -var="serverless_api_key=${{secrets.api_key}}2"
+          -var="api_key=${{secrets.api_key}}"
