@@ -1,4 +1,4 @@
-# primer-challenge
+# infra-challenge
 The objective of this assessment was to deploy a REST API that could retrieve transactions from a DynamoDB table.
 
 ## Architecture
@@ -10,7 +10,7 @@ It was a requirement to use terraform to deploy the API Gateway + Lambda functio
 
 To show how this could be done, I decided to have a second API deployed using serverless framework. The lambda functions are all zipped and deployed to S3 on the same file, because I just reuse the code used on this second API.
 
-Please refer to `primer-api/` for more API information or `terraform/` for more infrastructure-related information.
+Please refer to `api/` for more API information or `terraform/` for more infrastructure-related information.
 
 ![architecture](.github/images/architecture.jpg)
 
@@ -30,7 +30,7 @@ This workflow consists of four steps:
 
 
 #### tf-deploy
-The objective of this job is to deploy the entire terraform infrastructure. It zips the content of `primer-api/` and executes terraform plan/apply.
+The objective of this job is to deploy the entire terraform infrastructure. It zips the content of `api/` and executes terraform plan/apply.
 
 #### deploy-serverless-framework-api
 This needs to run after `tf-deploy` since it depends on some resources created by terraform (e.g. S3 bucket, API key on parameter store, etc). The point of this job is to deploy the API created using serverless framework.

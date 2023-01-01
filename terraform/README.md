@@ -20,7 +20,7 @@ DynamoDB table that stores all the transaction information.
 
 ### API Gateway
 
-Creates a REST API based on `primer-api/openapi.json`. There are three endpoints:
+Creates a REST API based on `api/openapi.json`. There are three endpoints:
 
 * `/populate`: Which executes the provided function. Maps to `populate` lambda function.
 * `/transactions`: Which executes the `transactions` lambda function to retrieve all the transactions.
@@ -29,13 +29,13 @@ Creates a REST API based on `primer-api/openapi.json`. There are three endpoints
 ### SQS
 Two queues are created. The queue is used to add new transactions to the table, therefore there is a source event for the `add transaction` function.
 
-The other queue is a dead letter queue. This queue is used to host transactions that failed to be inserted (check `primer-api/` for more information).
+The other queue is a dead letter queue. This queue is used to host transactions that failed to be inserted (check `api/` for more information).
 
 ### S3
 An S3 bucket to host the lambda functions code.
 
 ### System Manager
-A parameter stored on Parameter Store, hosting the API key used by the Serverless Framework API (see `primer_api/` for more information).
+A parameter stored on Parameter Store, hosting the API key used by the Serverless Framework API (see `api/` for more information).
 
 ## Variables
 * `username`: A prefix for multiple resources (e.g. `porthunt`).

@@ -1,8 +1,8 @@
-service: primer-challenge-serverless-framework
-frameworkVersion: '3'
+service: infra-challenge-serverless-framework
+frameworkVersion: "3"
 
 custom:
-  vars: ${file(vars.yml):${opt:stage, "self:provider.stage"}, file(vars.yml):dev} 
+  vars: ${file(vars.yml):${opt:stage, "self:provider.stage"}, file(vars.yml):dev}
   apiKeys:
     - name: ${self:custom.vars.API_KEY_NAME}
       value: ${ssm:${self:custom.vars.API_KEY_NAME}}
@@ -31,18 +31,18 @@ provider:
     TRANSACTION_DLQ: ${self:custom.vars.TRANSACTION_DLQ}
   iam:
     role:
-      name: primer-challenge-serverless-fwk-role
+      name: infra-challenge-serverless-fwk-role
       statements:
-        - Effect: 'Allow'
-          Action: 
-            - 'dynamodb:Scan'
-            - 'dynamodb:PutItem'
-            - 'dynamodb:GetItem'
-          Resource: 'arn:aws:dynamodb:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:table/${self:custom.vars.TRANSACTION_TABLE}'
-        - Effect: 'Allow'
-          Action: 
-            - 'sqs:SendMessage'
-          Resource: 'arn:aws:sqs:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:${self:custom.vars.TRANSACTION_DLQ}'
+        - Effect: "Allow"
+          Action:
+            - "dynamodb:Scan"
+            - "dynamodb:PutItem"
+            - "dynamodb:GetItem"
+          Resource: "arn:aws:dynamodb:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:table/${self:custom.vars.TRANSACTION_TABLE}"
+        - Effect: "Allow"
+          Action:
+            - "sqs:SendMessage"
+          Resource: "arn:aws:sqs:${self:custom.vars.REGION}:${self:custom.vars.AWS_ACCOUNT_ID}:${self:custom.vars.TRANSACTION_DLQ}"
 
 plugins:
   - serverless-offline
@@ -56,7 +56,7 @@ functions:
       - http:
           method: POST
           path: populate
-  
+
   transactions:
     handler: app.transactions
     events:

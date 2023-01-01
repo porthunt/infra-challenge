@@ -2,15 +2,15 @@ name: API Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'Makefile'
-      - 'requirements-dev.txt'
-      - '.gitignore'
-      - '.github/workflows/destroy.yml'
-      - '/github/images/*'
-      - 'tests/**'
+      - "**.md"
+      - "Makefile"
+      - "requirements-dev.txt"
+      - ".gitignore"
+      - ".github/workflows/destroy.yml"
+      - "/github/images/*"
+      - "tests/**"
   workflow_dispatch:
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: ./primer-api
-    
+        working-directory: ./api
+
     steps:
       - uses: actions/checkout@v2
 
@@ -29,10 +29,10 @@ jobs:
       - name: Run pre-commit hooks
         shell: bash
         run: pre-commit run --all-files
-      
+
       - name: Execute bandit
         run: make bandit
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -46,8 +46,8 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: ./primer-api
-    
+        working-directory: ./api
+
     steps:
       - uses: actions/checkout@v2
 
@@ -83,11 +83,11 @@ jobs:
         run: terraform validate
 
       - name: Create ZIP file
-        working-directory: ./primer-api
+        working-directory: ./api
         run: |
           pip install --target ./package -r requirements.txt
-          cd package && zip -q -r ../primer-api.zip .
-          zip -g -q -r ../primer-api.zip ../app
+          cd package && zip -q -r ../api.zip .
+          zip -g -q -r ../api.zip ../app
 
       - name: Terraform Plan
         run: |
@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: ./primer-api
+        working-directory: ./api
 
     steps:
       - uses: actions/checkout@v2
@@ -120,7 +120,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      
+
       - name: Set up environment
         run: npm install
 
@@ -135,12 +135,12 @@ jobs:
     runs-on: ubuntu-20.04
     defaults:
       run:
-        working-directory: ./primer-api
+        working-directory: ./api
     env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          API_KEY: ${{ secrets.API_KEY }}
-      
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      API_KEY: ${{ secrets.API_KEY }}
+
     steps:
       - uses: actions/checkout@v2
 
@@ -150,7 +150,7 @@ jobs:
       - name: Verify endpoints - terraform lambdas
         run: pytest tests/functional --api porthunt-transaction-api -s
         timeout-minutes: 1
-      
+
       - name: Verify endpoints - serverless framework
-        run: pytest tests/functional --api dev-primer-challenge-serverless-framework -s
+        run: pytest tests/functional --api dev-infra-challenge-serverless-framework -s
         timeout-minutes: 1

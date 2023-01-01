@@ -1,9 +1,9 @@
 terraform {
   cloud {
-    organization = "primer-challenge"
+    organization = "infra-challenge"
 
     workspaces {
-      name = "primer-demo"
+      name = "infra-demo"
     }
   }
 }
@@ -17,17 +17,17 @@ provider "aws" {
 module "populate_lambda" {
   source            = "../modules/lambda"
   function_name     = "${var.username}-populate"
-  zip_name          = "primer-api.zip"
+  zip_name          = "api.zip"
   s3_bucket         = module.s3.bucket_name
   handler           = "app.populate_table"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_path       = "../../primer-api/primer-api.zip"
-  s3_key            = "primer-api.zip"
+  source_path       = "../../api/api.zip"
+  s3_key            = "api.zip"
   env_variables = {
     "USERNAME" : var.username,
     "TRANSACTION_TABLE" : module.dynamodb.table_name
   }
-  source_code_hash  = base64sha256("./primer-api.zip")
+  source_code_hash  = base64sha256("./api.zip")
   api_gateway_event = true
 }
 
@@ -35,17 +35,17 @@ module "populate_lambda" {
 module "transaction_lambda" {
   source            = "../modules/lambda"
   function_name     = "${var.username}-transactions"
-  zip_name          = "primer-api.zip"
+  zip_name          = "api.zip"
   s3_bucket         = module.s3.bucket_name
   handler           = "app.transactions"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_path       = "../../primer-api/primer-api.zip"
-  s3_key            = "primer-api.zip"
+  source_path       = "../../api/api.zip"
+  s3_key            = "api.zip"
   env_variables = {
     "USERNAME" : var.username,
     "TRANSACTION_TABLE" : module.dynamodb.table_name
   }
-  source_code_hash  = base64sha256("./primer-api.zip")
+  source_code_hash  = base64sha256("./api.zip")
   api_gateway_event = true
 }
 
@@ -53,18 +53,18 @@ module "transaction_lambda" {
 module "add_transaction_lambda" {
   source            = "../modules/lambda"
   function_name     = "${var.username}-add-transaction"
-  zip_name          = "primer-api.zip"
+  zip_name          = "api.zip"
   s3_bucket         = module.s3.bucket_name
   handler           = "app.add_transaction"
   api_execution_arn = module.apigateway.api_execution_arn
-  source_path       = "../../primer-api/primer-api.zip"
-  s3_key            = "primer-api.zip"
+  source_path       = "../../api/api.zip"
+  s3_key            = "api.zip"
   env_variables = {
     "USERNAME" : var.username,
     "TRANSACTION_TABLE" : module.dynamodb.table_name,
     "TRANSACTION_DLQ" : module.sqs.dlq_name
   }
-  source_code_hash = base64sha256("./primer-api.zip")
+  source_code_hash = base64sha256("./api.zip")
   sqs_event        = true
   queue_arn        = module.sqs.sqs_arn
 }
@@ -104,7 +104,7 @@ module "dynamodb" {
 module "apigateway" {
   source          = "../modules/apigateway"
   api_name        = "${var.username}-transaction-api"
-  openapi_file    = "../../primer-api/openapi.json"
+  openapi_file    = "../../api/openapi.json"
   api_key_name    = "${var.username}-transaction-api-key"
   api_key_value   = var.api_key
   usage_plan_name = "${var.username}-transaction-api-usage-plan"
@@ -119,14 +119,14 @@ module "apigateway" {
 ### Add the SQS queue
 module "sqs" {
   source     = "../modules/sqs"
-  queue_name = "${var.username}-primer-challenge-queue"
+  queue_name = "${var.username}-infra-challenge-queue"
 }
 
 
 ### Add S3 bucket to host lambda code
 module "s3" {
   source        = "../modules/s3"
-  bucket_name   = "primer-challenge-lambda-deployment-a32w0a"
+  bucket_name   = "infra-challenge-lambda-deployment-a32w0a"
   force_destroy = true
 }
 
@@ -135,7 +135,7 @@ module "s3" {
 # API that was created using Serverless Framework
 module "systemmanager" {
   source      = "../modules/systemmanager"
-  name        = "primer-challenge-api-key"
+  name        = "infra-challenge-api-key"
   description = "API key for the API (Serverless Framework)"
   value       = "${var.api_key}2"
 }

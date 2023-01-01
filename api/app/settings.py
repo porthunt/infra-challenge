@@ -19,11 +19,11 @@ def retrieve_log_level():
 logging.basicConfig(
     format="[%(levelname)s] :: %(message)s", level=retrieve_log_level()
 )
-logger = logging.getLogger("primer-challenge")
+logger = logging.getLogger("infra-challenge")
 transaction_table = os.getenv(
     "TRANSACTION_TABLE", "porthunt-transaction-challenge"
 )
 transaction_dlq = os.getenv(
-    "TRANSACTION_DLQ", "porthunt-primer-challenge-queue-DLQ"
+    "TRANSACTION_DLQ", "porthunt-infra-challenge-queue-DLQ"
 )
 limit_settings = {"default": 100, "min": 1, "max": 1000}

@@ -1,4 +1,4 @@
-# primer-api
+# api
 
 ## Configuring
 
@@ -8,7 +8,7 @@
 
 Execute the following commands to configure the environment (Unix based):
 ```shell
-$ cd primer-api/
+$ cd api/
 $ virtualenv -p python3 venv
 $ source venv/bin/activate
 $ make init

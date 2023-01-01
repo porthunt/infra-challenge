@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "primer-challenge",
+    "title": "infra-challenge",
     "version": "v1"
   },
   "servers": [
